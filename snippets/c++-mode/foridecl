@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for (std::vector<T>::const_iterator itr = _.begin(); itr!=_.end(); ++itr) { ... }
+# key: foridecl
+# --
+for (${1:std::vector<T>::const_iterator} ${2:itr}=${3:var}.begin(); $2!=$3.end(); ++$2) {
+    $0
+}

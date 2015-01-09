@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: aligned-top
+# key: aldt
+# --
+\begin{aligned}[t]
+  $0
+\end{aligned}

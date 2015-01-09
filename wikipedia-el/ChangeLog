@@ -1,0 +1,298 @@
+2006-05-13  Matthew Mundell  <matt@mundell.ukfsn.org>
+
+	* wikipedia.el (wikipedia-turn-on-eldoc-mode): Correct typo in
+	doc.
+	(wikipedia-refresh-buffer): Make `arg' optional.
+	(wikipedia-show-buffer-markup): Likewise.
+	(wikipedia-visit-article): Use word at point as default article.
+	(wikipedia-next-reference): New command.
+	(wikipedia-previous-reference): New command.
+	(wikipedia-handle-visited-article): Call
+	`delete-trailing-whitespace'.
+
+	Add direct database retrieval of articles.
+
+	* wikipedia.el (wikipedia-article-database): New var.
+	(wikipedia-article-database): New custom var.
+	(wikipedia-database-user): New custom var.
+	(wikipedia-visit-local-article): New command.
+	(wikipedia-visit-article): Add database parameter.
+	(wikipedia-handle-visited-article): Add `database' and
+	`keep-headers' args.
+
+	Add conversion of some HTML &nbsp; style entities.
+
+	* wikipedia.el (wikipedia-convert-symbols): New var.
+	(wikipedia-convert-symbols): New function.
+
+	Add conversion of maths environments to images.
+
+	* wikipedia.el (wikipedia-convert-maths): New var.
+	(wikipedia-convert-maths): New function.
+
+2005-07-03  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-language-domains): Update Russian
+	special prefixes that have just changed to sensible text.
+
+2005-06-29  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (properties): Don't use `,,@' as this cannot be
+	loaded by earlier emacsen (thanks to Brouard Nicolas and Mario
+	Lang for spotting this.)
+	(wikipedia-turn-on-eldoc-mode, wikipedia-add-menubar-index): Only
+	use `docstring' if `defalias' supports it (newer emacsen only.)
+
+2005-06-26  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-electric-quote): When prefix arg is
+	single minus, insert opening quote insert of closing and vice
+	versa.
+	
+2005-06-25  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el: Move some functions up/down to achieve more
+	sensible grouping.  Add ``header comments'' for groups (those
+	starting with three semicolons.)
+	(wikipedia-use-link-associations-for-domain): New defsubst.
+	(wikipedia-harvest-link-associations): Use the new defsubst and
+	thus behave as described in `wikipedia-use-link-associations'
+	documentation.
+	(wikipedia-create-alter-or-delete-link): Likewise.
+	(wikipedia-get-domain-safe): Move to internal functions page.
+	(wikipedia-get-link-associations): Likewise.
+	(wikipedia-make-all-spaces-normal): Likewise.
+	(wikipedia-print-current-link-destination): Likewise.
+	(wikipedia-link-address-at): Likewise.
+	(wikipedia-markup-region-at): Likewise.
+	(wikipedia-replace-preceding-character): Likewise.
+	(wikipedia-insert-special-character): Make it work even if
+	`wikipedia-article-domain-description' is not bound in the current
+	buffer.
+
+2005-06-16  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-electric-apostrophe): New function.
+	(wikipedia-mode-map): Bind it to `''.
+
+2005-06-15  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-make-all-spaces-normal): Rename from
+	`wikipedia-make-all-spaces-non-breaking': it used to have a
+	confusing name that stated exactly the opposite to what the
+	function did.
+	(wikipedia-mode-directory): Use `convert-standard-filename'.
+	(wikipedia-get-link-associations-filename): New function, common
+	part of `wikipedia-get-link-associations' and
+	`wikipedia-kill-emacs-hook'.  Use `file-name-as-directory' and
+	`convert-standard-filename'.
+	(wikipedia-visit-article): Locally bind `case-fold-search' when
+	appropriate.
+	(wikipedia-electric-digit): Likewise for `search-space-regexp'.
+	(wikipedia-hide-paragraph-markup): Likewise.
+	(wikipedia-handle-visited-article): Likewise.
+
+2005-06-14  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-in-write-contents): New variable.
+	(wikipedia-mode): Hook `wikipedia-write-contents' to
+	`write-contents-functions'.
+	(wikipedia-write-contents): New function.
+
+2005-05-27  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-special-characters): Add apostrophe.
+
+2005-05-26  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-header-regexp): Replace `\\s-' with
+	`[[:blank:]]' to avoid matching newlines.
+
+2005-05-25  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-hide-region-markup): Make markers point
+	nowhere after the function is done.  Don't `setq' `start' to a
+	marker value, but rather to the position of the marker.
+	(wikipedia-show-region-markup): Likewise.
+	(wikipedia-hide-paragraph-markup): Use markers for emphasis start
+	points (fixes function behaviour in some complicated cases.)
+	(wikipedia-electric-keys-enabled): New variable.
+	(wikipedia-electric-space): Disable special functionality when
+	`wikipedia-electric-keys-enabled' is nil.
+	(wikipedia-electric-hyphen): Likewise.
+	(wikipedia-electric-equal-sign): Likewise.
+	(wikipedia-electric-quote): Likewise.
+	(wikipedia-electric-dot): Likewise.
+	(wikipedia-electric-digit): Likewise.
+	(wikipedia-electric-pseudo-number-sign): Likewise.
+	(wikipedia-electric-keys): New function.
+	(wikipedia-mode-map): Bind it to `C-c C-e'.
+	(wikipedia-header-level-1-face)
+	(wikipedia-header-level-2-face, wikipedia-header-level-3-face)
+	(wikipedia-header-level-4-face, wikipedia-header-level-5-face)
+	(wikipedia-header-level-6-face): New faces.
+	(wikipedia-header-faces): New constant vector.
+	(wikipedia-header-regexp): New constant (has been used in code
+	already; unifying.)
+	(wikipedia-hide-paragraph-markup): Highlight headers with
+	appropriate faces.
+
+2005-05-24  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-mode): Set `show-nonbreak-escape' to nil
+	locally.  Set `eldoc-documentation-function' in addition to
+	`eldoc-print-current-symbol-info-function' (the latter was renamed
+	to the former in GNU Emacs CVS.)
+	(wikipedia-create-alter-or-delete-link): When asked for a new link
+	from a quoted word/phrase, unquote it for the purpose of guessing
+	destination.
+	(wikipedia-after-change): Don't combine links (destination-wise)
+	when they happen to be directly adjacent after some text has been
+	deleted.
+
+2004-12-18  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-harvest-link-associations): Handle links
+	directly following each other properly (sometimes happens in
+	interwiki or category lists.)
+
+2004-12-14  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-create-alter-or-delete-link): Use new
+	`wikipedia-make-all-spaces-non-breaking' defsubst to avoid links
+	with non-breaking spaces in addresses (Wikipedia doesn't handle
+	them.)
+	(wikipedia-make-all-spaces-non-breaking): New defsubst.
+	(wikipedia-electric-space): Use new
+	`wikipedia-replace-preceding-character' function,
+	(wikipedia-electric-hyphen): Likewise.
+	(wikipedia-electric-equal-sign): Likewise.
+	(wikipedia-electric-dot): Likewise.
+	(wikipedia-electric-digit): Likewise.
+	(wikipedia-replace-preceding-character): New function.
+
+2004-12-05  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el: Use `preceding-char' and `following-char' instead
+	of `char-before' and `char-after' in most places.
+	(wikipedia-harvest-link-associations): Fix last change concerning
+	`wikipedia-use-link-associations'.  Call `error' only when run
+	interactively (i.e. not from a hook.)
+	(wikipedia-create-alter-or-delete-link): Likewise,
+	(wikipedia-handle-visited-article): New function.
+	(wikipedia-visit-article): Use ``action=raw'' instead of
+	``action=edit'' in URL.	 Use `wikipedia-handle-visited-article'
+	instead of `wikipedia-extract-article-text' as callback for
+	`url-retrieve'.	 (Thanks go to Chong Yidong for the hint.)
+	(wikipedia-visit-article): Add support for Wikipedia redirections.
+
+2004-12-04  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el: Use `point-min' and `point-max', don't expect no
+	narrowing (many small changes all around the file.)
+	(wikipedia-harvest-link-associations): New function.
+	(wikipedia-mode-hook): Move up.	 Add
+	`wikipedia-harvest-link-associations' option.
+	(wikipedia-kill-emacs-hook): Save all link association tables in
+	UTF-8.
+	(wikipedia-mode): Add basic support for Outline minor mode.
+	(wikipedia-hide-region-markup): Bind `end-marker' in the very
+	beginning of the function since `wikipedia-show-region-markup'
+	modifies it.
+	(wikipedia-language-domains-for-customization): New constant.
+	(wikipedia-default-language-domain): Use it.
+	(wikipedia-use-link-associations): Use it and add an option for a
+	list of domains for which to use link associations.
+	(wikipedia-create-alter-or-delete-link): Adapt for last change.
+
+2004-12-03  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-language-domains): Add Meta-Wiki
+	domain (`meta'.)
+	(wikipedia-all-language-domains): Likewise.
+	(wikipedia-special-characters): Add identical, not-equal,
+	less-or-equal, greater-or-equal signs.
+	(wikipedia-html-entities): Add entities for them.
+	(wikipedia-electric-equal-sign): New function.
+	(wikipedia-mode-map): Bind it to `='.
+	(wikipedia-create-alter-or-delete-link): Change handling of
+	interactive calls to handle more cases.	 In particular, `C-3 C-c
+	C-l' will set a link from the word under point and the next two
+	words.
+	(wikipedia-language-domains): Add lists of special namespaces for
+	each domain.  Remove `image-link-prefix' property.
+	(wikipedia-get-domain-safe): New defsubst.
+	(wikipedia-visit-article): Remove `default-domain' argument (use
+	`wikipedia-get-domain-safe' instead.)  Use list of special
+	namespaces for article name completion when called interactively.
+	(wikipedia-use-link-associations): Make tags more consistent with
+	the rest of Emacs.
+	(wikipedia-auto-rescan-sections): New customizable variable.
+	(wikipedia-which-func): New function.
+	(wikipedia-mode): Hook `wikipedia-which-func' to
+	`which-func-functions'.
+
+2004-12-02  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el (wikipedia-mode-map): Bind
+	`wikipedia-insert-non-breaking-space' to `M-S-SPC', not
+	`S-SPC' (less intrusive.)
+	(wikipedia-hide-region-markup): Do nothing when `end' is greater
+	than `start' (happens in an empty buffer.)
+	(wikipedia-show-region-markup): Likewise.
+	(wikipedia-html-entities): Add all greek letters.
+	(wikipedia-known-html-entities-regexp): Also match numeric
+	entities (like ``&#1234;''.)
+	(wikipedia-hide-paragraph-markup): Handle numeric entities.
+	(wikipedia-set-region-primary-face): Don't evaluate `char-after'
+	at the end of buffer.
+	(wikipedia-show-links-markup): Fix last change.
+	(wikipedia-special-characters): Add a copyright and two trade
+	marks characters.
+	(wikipedia-html-entities): Add entities for them.
+	(wikipedia-mode): Bind `wikipedia-article-domain-description' if
+	it is not bound yet.  Make all variables buffer-local.
+	(wikipedia-language-domains): Add Simple English
+	domain (`simple'.)
+	(wikipedia-all-language-domains)
+	(wikipedia-interwiki-link-regexp): New variables.
+	(wikipedia-visit-article): Use `wikipedia-interwiki-link-regexp'.
+
+2004-12-01  Paul Pogonyshev  <pogonyshev@gmx.net>
+
+	* wikipedia.el: Make sure `next-single-property-change' and
+	`previous-single-property-change' are always called with a limit.
+	Use `provide'.	Rearrange some functions.
+	(wikipedia-create-alter-or-delete-link): Fix typo in prompt
+	string.
+	(wikipedia-electric-quote): Insert opening quote after opening
+	parenthesis, bracket or brace.
+	(wikipedia-create-markup-region): Use
+	`wikipedia-add-or-replace-face'.  Hence no more need to call
+	`wikipedia-delete-markup-subregions' before a call to this
+	function.
+	(wikipedia-show-links-markup): Make sure that when creating a
+	short-style link (``[[word]]ending'') the ending consists of
+	word-constituents only.
+	(wikipedia-mode): Make lines starting with '=', ':' and ';' also
+	start paragraphs.  Set `imenu-generic-expression' so that `imenu'
+	finds all subsections.
+	(wikipedia-mode-hook): Add `wikipedia-add-menubar-index' to the
+	option list.
+	(wikipedia-add-menubar-index): New alias for
+	`imenu-add-menubar-index'.
+	(wikipedia-use-link-associations, wikipedia-mode-directory): New
+	customizable variables.
+	(wikipedia-create-alter-or-delete-link): Use link associations.
+	(wikipedia-get-link-associations, wikipedia-kill-emacs-hook): New
+	functions.
+
+  Copyright (C) 2004, 2005 Paul Pogonyshev
+
+  Copying and distribution of this file, with or without modification,
+  are permitted provided the copyright notice and this notice are preserved.
+
+
+Local Variables:
+coding: utf-8
+End:

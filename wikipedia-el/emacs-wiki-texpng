@@ -1,0 +1,11 @@
+#!/bin/bash
+# Convert a TeX file to a PNG, for emacs-wiki and wikipedia modes.
+
+# FIX do in emacs (auctex)?
+# FIX quiet version of cmd?
+#echo latex $1.tex
+cd `dirname $1`
+latex $1.tex > /dev/null
+
+#echo dvipng -q -T tight $1.dvi -o $1.png
+dvipng -q -T tight $1.dvi -o $1.png

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: for (itr = _.begin(); <NL>itr!=_.end(); <NL>++itr) { ... }
+# key: foriv
+# -- fori vertical
+# --
+for (${1:${2:vector<int>}::${3:iterator}} ${4:itr} = ${5:var}.begin(); 
+    ${6:$4 != $5.end()}; 
+    ${7:++$4}) {
+    $0
+}

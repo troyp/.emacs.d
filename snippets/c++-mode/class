@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: class
+# key: cls
+# --
+class ${1:Name}${2:: ${3:public }${4:parent}} {
+public:
+    ${1:$(yas/substr text "[^: ]*")}();
+    virtual ~${1:$(yas/substr text "[^: ]*")}();
+    $0
+};

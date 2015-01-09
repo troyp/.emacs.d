@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: aligned-centre
+# key: aldc
+# --
+\begin{aligned}[c]
+  $0
+\end{aligned}

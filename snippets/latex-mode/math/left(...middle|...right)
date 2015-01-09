@@ -1,0 +1,5 @@
+# contributor: Troy Pracy
+# name: \left(...\middle|...\right)
+# key: lmr
+# --
+\left${1:\(}$0\middle${2:|}\right${3:\)}

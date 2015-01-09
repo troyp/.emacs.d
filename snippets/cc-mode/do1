@@ -1,0 +1,4 @@
+#name : do ... while (...)
+# key: do1
+# --
+do $0 while (${1:condition});

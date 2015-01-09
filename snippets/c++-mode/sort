@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sort
+# key: sort
+# --
+sort(${1:${2:v}.begin()}, ${3:$2.end()}${4:, ${5:comp}});

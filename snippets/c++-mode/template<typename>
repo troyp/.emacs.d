@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: template<typename _>
+# key: tempty
+# --
+template<typename ${1:T}>$ 0

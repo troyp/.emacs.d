@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: vector<T>(n, T(...))
+# key: vecc
+# --
+vector<${1:T}> ${2:var}${3:(${4:10}${5:, $1($6)})}$0

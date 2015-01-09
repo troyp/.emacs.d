@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: matrix
+# key: mat
+# --
+\begin{${1:p}matrix}
+  $0
+\end{$1matrix}

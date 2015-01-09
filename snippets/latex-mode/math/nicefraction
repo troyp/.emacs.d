@@ -1,0 +1,6 @@
+-*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: nicefrac
+# key: nfr
+# --
+\nicefrac{$1}{$2}$0

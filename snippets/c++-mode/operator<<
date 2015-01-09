@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: ostream& operator<<(...) { ... }
+# key: <<
+# --
+ostream& operator<<(${1:${2:ostream &} ${3:out}}, const ${4:type} & ${5:c}) {
+         $0
+         return $3;
+}

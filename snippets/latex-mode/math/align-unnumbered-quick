@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: align* unnumbered quick (amsmath)
+# key: als
+# --
+\begin{align*}
+  $0
+\end{align*}

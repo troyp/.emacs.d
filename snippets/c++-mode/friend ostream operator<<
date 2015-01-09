@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: friend ostream & operator<<(...);
+# key: dec<<
+# --
+friend ostream& operator<<(ostream &, const ${1:type} &);
+$0

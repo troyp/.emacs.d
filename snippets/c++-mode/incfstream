@@ -1,0 +1,4 @@
+#name : #include <fstream>
+#key: incfstream
+# --
+#include <fstream>

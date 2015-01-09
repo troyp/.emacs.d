@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fun ...
+# key: fun
+# --
+fun \{${1:F} ${2: X}\}
+    $0
+end

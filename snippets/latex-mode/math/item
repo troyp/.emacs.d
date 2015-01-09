@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: item
+# key: it
+# --
+\item $0

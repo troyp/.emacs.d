@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: forin (_:_) ...
+# key: forin
+# --
+for (${1:auto} ${2:i} : ${3:v}) $0

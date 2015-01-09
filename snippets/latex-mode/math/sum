@@ -1,0 +1,5 @@
+# contributor: Troy Pracy
+# name: sum_ ...
+# key: sum
+# --
+\sum${1:_\{${2:i}=${3:1...n}\}}$0

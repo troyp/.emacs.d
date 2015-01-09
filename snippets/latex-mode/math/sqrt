@@ -1,0 +1,6 @@
+-*- mode: snippet -*-
+# contributor: Troy Pracy
+# name: sqrt
+# key: sq
+# --
+\sqrt{$1}$0
