@@ -42,6 +42,11 @@
     (print (car list) PRINTCHARFUN)
     (setq list (cdr list))))
 
+(defun ep (expr)
+  (newline)
+  (princ ">> " (point-marker))
+  (princ expr (point-marker)))
+
 
 ;; ******************************
 ;; *                            *

@@ -6,6 +6,9 @@
 *.elc
 session.*
 #*#
+*.swp
+*.swo
+*.swn
 *.tar.gz
 *.tgz
 *.zip
@@ -14,6 +17,7 @@ ac-comphist.dat
 temp
 tmp
 temp.*
+*.temp
 tramp
 .cask/
 .python-environments/

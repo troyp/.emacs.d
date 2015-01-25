@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: case _: { ...;} break
+# key: cab
+# --
+ case ${1:const}: { `(progn (indent-according-to-mode) nil)`
+      $0${3:;}
+ } ${2:break;} `(progn (indent-according-to-mode) nil)`

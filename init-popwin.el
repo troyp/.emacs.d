@@ -1,0 +1,12 @@
+(add-to-list 'load-path "~/.emacs.d/popwin-el") 
+(add-to-list 'load-path "~/.emacs.d/popwin-el/misc") 
+(require 'popwin)
+(popwin-mode 1)
+(global-set-key (kbd "C-S-z") popwin:keymap)
+(when (boundp 'popwin:special-display-config)
+  (loop for CONFIG in
+	'(("*Quail Completions* " :noselect t)
+	  ("^\\*.*makey-key.*\\*$" :regexp t)
+	  ("^\\*helm.*\\*$" :regexp t :height 30))
+	do (add-to-list 'popwin:special-display-config CONFIG))
+  popwin:special-display-config)
