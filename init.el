@@ -386,7 +386,28 @@
 (require 'uniquify) ;; remove in emacs24.4
 ;; (load "~/.emacs.d/init-popwin.el")
 
+(windmove-default-keybindings 'meta)  ; meta-arrow to move buffers
+(global-set-key [C-tab] 'next-multiframe-window)
+(global-set-key [C-S-iso-lefttab] 'previous-multiframe-window)
+
+;; -----------
+;; buffer-move
+;; -----------
 (require 'buffer-move)
+(global-set-key (kbd "<C-S-up>")     'buf-move-up)
+(global-set-key (kbd "<C-S-down>")   'buf-move-down)
+(global-set-key (kbd "<C-S-left>")   'buf-move-left)
+(global-set-key (kbd "<C-S-right>")  'buf-move-right)
+
+;; ---------------
+;; transpose-frame
+;; ---------------
+(require 'transpose-frame)
+(global-set-key (kbd "C-x C-/")  'transpose-frame)
+
+;; --------------------
+;; function definitions
+;; --------------------
 
 (defun win-swap ()
   "Swap windows using buffer-move.el"
@@ -396,6 +417,7 @@
 	((windmove-find-other-window 'down)  (buf-move-down))
 	((windmove-find-other-window 'up)    (buf-move-up)))
   (other-window 1))
+(global-set-key (kbd "<C-S-return>")  'win-swap)
 
 (defun toggle-frame-split ()
 "  If the frame is split vertically, split it horizontally or vice versa.
@@ -409,20 +431,8 @@
         (split-window-horizontally)
       (split-window-vertically)) ; gives us a split with the other window twice
     (switch-to-buffer nil))) ; restore the original window in this part of the frame
-
 (global-set-key "\C-x55" 'toggle-frame-split)
 
-(global-set-key (kbd "<C-S-return>")  'win-swap)
-
-
-(windmove-default-keybindings 'meta)  ; meta-arrow to move buffers
-(global-set-key [C-tab] 'next-multiframe-window)
-(global-set-key [C-S-iso-lefttab] 'previous-multiframe-window)
-
-(global-set-key (kbd "<C-S-up>")     'buf-move-up)
-(global-set-key (kbd "<C-S-down>")   'buf-move-down)
-(global-set-key (kbd "<C-S-left>")   'buf-move-left)
-(global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
 ;; ********************
 ;; *                  *
