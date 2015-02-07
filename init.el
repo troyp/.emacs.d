@@ -145,10 +145,10 @@
 ;; *              *
 ;; ****************
 
-(setq my-themes '(adwaita zenburn misterioso sanity-inc-tomorrow-night
-			  sanity-inc-tomorrow-eighties sanity-inc-tomorrow-day))
+(setq my-themes '(adwaita zenburn misterioso sanityinc-tomorrow-night
+			  sanityinc-tomorrow-eighties sanityinc-tomorrow-day))
 (setq light-theme 'adwaita)
-(setq dark-theme 'sanity-inc-tomorrow-night)
+(setq dark-theme 'sanityinc-tomorrow-night)
 (load-theme dark-theme t)
 ;; (setq current-theme dark-theme)
 
@@ -162,6 +162,7 @@
   (if (eq current-theme light-theme)
       (theme dark-theme)
     (theme light-theme)))
+(defalias 'tt 'toggle-theme)
 
 (set-face-attribute 'fringe nil :background "#555")  ;; set fringe to dark gray
 (set-fringe-mode '(1 . 1))  ;; set fringe to 1px at left and right
@@ -213,7 +214,7 @@
 ;; ---------
 ;; uniquify.
 ;; ---------
-(require 'uniquify)
+(require 'uniquify)    ;; remove in emacs24.4
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 
 
@@ -269,6 +270,7 @@
 ;; ----
 ;; helm
 ;; ----
+(require 'helm)
 (require 'helm-config)
 (setq helm-quick-update t
       helm-idle-delay 0.01
@@ -285,8 +287,8 @@
 (global-set-key (kbd "M-x") 'smex)
 (setq read-file-name-completion-ignore-case t)
 (load "~/.emacs.d/ido-helm.el")
-(define-key ido-buffer-completion-map (kbd "<tab>") 'ido-next-match)
-(define-key ido-buffer-completion-map (kbd "<backtab>") 'ido-prev-match)
+; (define-key ido-buffer-completion-map (kbd "<tab>") 'ido-next-match)
+; (define-key ido-buffer-completion-map (kbd "<backtab>") 'ido-prev-match)
 
 
 ;; ;; anything
@@ -383,7 +385,6 @@
 ;; *                           *
 ;; *****************************
 
-(require 'uniquify) ;; remove in emacs24.4
 ;; (load "~/.emacs.d/init-popwin.el")
 
 (windmove-default-keybindings 'meta)  ; meta-arrow to move buffers
@@ -1096,6 +1097,14 @@
 ;; shell-script
 (add-to-list 'auto-mode-alist '("\\.bash" . sh-mode))
 
+;; defaults
+(setq-default sh-indent-for-then 0)
+(setq-default sh-indent-for-do 0)
+(setq-default sh-indent-after-do '+)
+(setq-default sh-indent-for-case-label '*)
+(setq-default sh-indent-for-case-alt '+)
+(setq-default sh-indent-comment t)
+
 ;; ANSI-TERM-MODE.
 (setq term-bind-key-alist-defaults
       '(("C-c C-c" . term-interrupt-subjob)
@@ -1232,18 +1241,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; *       *
 ;; *********
 
-;; free up S-down-mouse-1 and S-drag-mouse-1 for other bindings
-(global-set-key (kbd "<C-S-down-mouse-1>") 'mouse-appearance-menu)
-(global-set-key (kbd "<C-S-drag-mouse-1>") 'mouse-set-point)
-
-(require 'mouse-copy)
-(require 'mouse-drag)
-;; These definitions override the old binding of M-mouse-1 to mouse-drag-secondary.
-;; It can be made up with a M-mouse-1 followed by a M-mouse-3.
-(global-set-key [M-down-mouse-1] 'mouse-drag-secondary-pasting)
-(global-set-key [M-S-down-mouse-1] 'mouse-drag-secondary-moving)
-(global-set-key [down-mouse-2] 'mouse-drag-drag)
-(global-set-key [S-down-mouse-2] 'mouse-drag-throw)
+;; (load "~/.emacs.d/init-mouse.el")
 
 
 ;; ****************
@@ -1330,6 +1328,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'arv 'auto-revert-mode)
 (defalias 'revb 'revert-buffer)
 (defalias 'sim 'set-input-method)  ;; bound to C-\
+(defalias 'diffb 'diff-buffer-with-file)
+(defalias 'repl 'ielm)
+(defalias 'lim 'lisp-interaction-mode)
+(defalias 'el 'emacs-lisp-mode)
 
 ;; FINAL
 (setq skeleton-pair nil)
