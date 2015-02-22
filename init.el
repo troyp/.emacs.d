@@ -302,6 +302,7 @@
 (yas-global-mode 1)
 (setq yas-triggers-in-field t)  ; allow stacked expansion
 
+
 ;; ------------
 ;; auto-complete
 ;; ------------
@@ -547,6 +548,7 @@
 (define-key evil-insert-state-map (kbd "C-S-l") #'backward-delete-char)
 (define-key evil-insert-state-map (kbd "C-k") #'evil-insert-digraph)
 (define-key evil-insert-state-map (kbd "C-S-k") #'kill-line)
+(define-key evil-insert-state-map (kbd "C-.") 'yas-expand)
 
 ;; key bindings for other extensions
 ;; (define-key evil-visual-state-map (kbd "C-S-c C-S-c")
