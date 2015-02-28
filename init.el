@@ -282,13 +282,23 @@
 ;; ---
 ;; ido
 ;; ---
-(require 'smex)
-(autoload 'smex "smex" "Smex provides an ido interface to M-x commands.")
-(global-set-key (kbd "M-x") 'smex)
-(setq read-file-name-completion-ignore-case t)
-(load "~/.emacs.d/ido-helm.el")
-; (define-key ido-buffer-completion-map (kbd "<tab>") 'ido-next-match)
-; (define-key ido-buffer-completion-map (kbd "<backtab>") 'ido-prev-match)
+(ido-mode t)
+(setq ido-enable-flex-matching t) 
+;; ido: 
+;;   C-s,C-r: cycle completions
+;;   TAB: show list of clickable completions
+;;   BACKSPACE: back one directory
+;;   M-b: first press removes / so you can edit the directory name (backspace 
+;;        works normally). Thereafter, removes one directory level.
+;;   M-f: reverses one M-b
+
+;; (require 'smex)
+;; (autoload 'smex "smex" "Smex provides an ido interface to M-x commands.")
+;; (global-set-key (kbd "M-x") 'smex)
+;; (setq read-file-name-completion-ignore-case t)
+;; (load "~/.emacs.d/ido-helm.el")
+;; ;; (define-key ido-buffer-completion-map (kbd "<tab>") 'ido-next-match)
+;; ;; (define-key ido-buffer-completion-map (kbd "<backtab>") 'ido-prev-match)
 
 
 ;; ;; anything
