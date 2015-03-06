@@ -322,3 +322,14 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 (defun make-executable ()
   (interactive)
   (shell-command (concat "chmod a+x " buffer-file-name)))
+
+
+;; ***************
+;; *             *
+;; * KEY BINDING *
+;; *             *
+;; ***************
+
+(defun define-key-multi-modes (key def keymaps)
+  (dolist (keymap keymaps)
+    (define-key (symbol-value keymap) key def)))

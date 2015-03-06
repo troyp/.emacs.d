@@ -1305,7 +1305,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   '(sh-mode-map
     python-mode-map))
 
-
 ;; ****************
 ;; *              *
 ;; * KEY BINDINGS *
@@ -1394,7 +1393,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'repl 'ielm)
 (defalias 'lim 'lisp-interaction-mode)
 (defalias 'el 'emacs-lisp-mode)
-(defalias 'ppr 'cl-prettyprint)
 
 ;; FINAL
 (setq skeleton-pair nil)

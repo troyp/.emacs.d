@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+	evil-append
 	evil-backward-WORD-begin
 	evil-backward-char
 	evil-backward-word-begin
@@ -32,4 +33,5 @@
 
 (setq mc/cmds-to-run-once
       '(
+	keyboard-quit
 	))
