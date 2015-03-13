@@ -47,6 +47,9 @@
   (princ ">> " (point-marker))
   (princ expr (point-marker)))
 
+(defun concat-symbols (&rest syms)
+  (make-symbol (apply 'concat (mapcar 'symbol-name syms))))
+
 
 ;; ******************************
 ;; *                            *
@@ -333,3 +336,28 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 (defun define-key-multi-modes (key def keymaps)
   (dolist (keymap keymaps)
     (define-key (symbol-value keymap) key def)))
+
+;; FIXME: mode-hook verson
+;; (defun define-key-multi-modes (key def modes)
+;;   (dolist (mode modes)
+;;     (add-hook
+;;      (concat-symbols mode '-hook)
+;;      (lambda nil
+;;        (define-key (concat-symbols mode '-map)
+;; 	 key def)))))
+
+
+;; *********
+;; *       *
+;; * ALIGN *
+;; *       *
+;; *********
+
+;; from http://emacswiki.org/emacs/AlignCommands
+;; GPL2
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to 
+     the given regular expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end 
+		(concat "\\(\\s-*\\)" regexp) 1 1 t))
