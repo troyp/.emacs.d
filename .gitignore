@@ -1,11 +1,11 @@
 .directory
-.#*
+.\#*
 *.swp
 *.kate-swp
 *~
 *.elc
 session.*
-#*#
+\#*\#
 *.swp
 *.swo
 *.swn
