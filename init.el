@@ -191,6 +191,10 @@
   (interactive)
   (load "~/.emacs.d/math-input.el"))
 
+(require 'ibus)
+(add-hook 'after-init-hook 'ibus-mode-on)
+(setq ibus-cursor-color '("red" "blue"))
+
 
 ;; **************************
 ;; *                        *
@@ -529,6 +533,11 @@
 ;;     (exchange-point-and-mark) (mc/edit-lines)))
 (define-key evil-visual-state-map (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (define-key evil-emacs-state-map (kbd "C-S-c C-S-c") 'mc/edit-lines)
+;; package-menu
+(define-key package-menu-mode-map (kbd "/") #'evil-search-forward)
+(define-key package-menu-mode-map (kbd "?") #'evil-search-backward)
+(define-key package-menu-mode-map (kbd "j") #'evil-next-line)
+(define-key package-menu-mode-map (kbd "k") #'evil-previous-line)
 
 (load "troy-evil-utils.el")
 (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
