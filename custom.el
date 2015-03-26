@@ -28,6 +28,7 @@
  '(python-python-command "/usr/bin/python")
  '(quack-default-program "/opt/racket/bin/racket")
  '(quack-programs (quote ("/opt/racket/bin/racket" "/opt/racket/bin/mzscheme" "bigloo" "csi" "csi -hygienic" "gosh" "gracket" "gsi" "gsi ~~/syntax-case.scm -" "guile" "kawa" "mit-scheme" "mzscheme" "racket" "racket -il typed/racket" "rs" "scheme" "scheme48" "scsh" "sisc" "stklos" "sxi")))
+ '(racket-racket-program "/opt/racket/bin/racket")
  '(scala-interpreter "/opt/scala/scala/bin/scala")
  '(sml-program-name "/usr/bin/sml")
  '(tool-bar-mode nil)

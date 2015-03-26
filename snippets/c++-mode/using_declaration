@@ -1,0 +1,4 @@
+# name : using ... 
+# key: us
+# --
+using ${1:std}::${2:cout}; $0

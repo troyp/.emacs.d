@@ -25,7 +25,7 @@
 (setq column-number-mode t)
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (setq scroll-bar-mode-explicit t)
-(set-scroll-bar-mode `right) 
+(set-scroll-bar-mode `right)
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed nil)
 ;(setq shift-select-mode nil)
@@ -93,7 +93,6 @@
 ;; *  NOTES  *
 ;; *         *
 ;; ***********
-;; asdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjkasdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjkasdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjkasdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjkasdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjkasdf l;sdk fl; as;ldkfj  ;laskdfj; as;dlkfj ; a;slkdfj ;asldkf ;l;sdkjf asl;dfasdl;kjfjk
 
 ;; M-x ffap  --  "find file at point" finds an elisp file and opens it (works in require).
 ;; M-x find-library  --  finds an elisp file and opens it (defaults to file at point if in require).
@@ -119,7 +118,7 @@
   (interactive "Stheme: ")
   (load-theme thm t)
   (setq current-theme thm))
-  
+
 (defun toggle-theme ()
   (interactive)
   (if (eq current-theme light-theme)
@@ -130,7 +129,7 @@
 (set-face-attribute 'fringe nil :background "#555")  ;; set fringe to dark gray
 (set-fringe-mode '(1 . 1))  ;; set fringe to 1px at left and right
 
-  
+
 ;; variable-pitch-mode. (C-x C-9)
 ;; --------------------
 (defun set-vfont ()
@@ -250,12 +249,12 @@
 ;; ido
 ;; ---
 (ido-mode t)
-(setq ido-enable-flex-matching t) 
-;; ido: 
+(setq ido-enable-flex-matching t)
+;; ido:
 ;;   C-s,C-r: cycle completions
 ;;   TAB: show list of clickable completions
 ;;   BACKSPACE: back one directory
-;;   M-b: first press removes / so you can edit the directory name (backspace 
+;;   M-b: first press removes / so you can edit the directory name (backspace
 ;;        works normally). Thereafter, removes one directory level.
 ;;   M-f: reverses one M-b
 
@@ -335,7 +334,7 @@
 ;; *       *
 ;; *********
 
-(add-to-list 'load-path "~/.emacs.d/dired-hacks") 
+(add-to-list 'load-path "~/.emacs.d/dired-hacks")
 (require 'dired+)
 (require 'dired-details+)
 (require 'dired-efap)
@@ -448,7 +447,7 @@
 (require 'facemenu+)
 
 (require 'hideshow-org)
-(defalias 'hsorg 'hs-org/minor-mode) 
+(defalias 'hsorg 'hs-org/minor-mode)
 
 ;; -----------
 ;; iedit-mode.
@@ -492,6 +491,8 @@
 ;; *           *
 ;; *************
 
+(global-set-key [f9] 'evil-mode)
+
 (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
 (evil-mode 1)
@@ -516,6 +517,10 @@
 (define-key evil-normal-state-map (kbd "C-S-o") #'evil-jump-forward)
 (define-key evil-normal-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
+(define-key evil-normal-state-map (kbd "[ SPC") #'insert-line-above)
+(define-key evil-normal-state-map (kbd "] SPC") #'insert-line-below)
+(define-key evil-normal-state-map (kbd "[ b") #'switch-to-prev-buffer)
+(define-key evil-normal-state-map (kbd "] b") #'switch-to-next-buffer)
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-S-y") #'evil-copy-from-below)
@@ -538,6 +543,35 @@
 (define-key package-menu-mode-map (kbd "?") #'evil-search-backward)
 (define-key package-menu-mode-map (kbd "j") #'evil-next-line)
 (define-key package-menu-mode-map (kbd "k") #'evil-previous-line)
+(define-key package-menu-mode-map (kbd "<f3>") #'evil-search-forward)
+(define-key package-menu-mode-map (kbd "S-<f3>") #'evil-search-backward)
+;; racket-mode, emacs-lisp-mode, lisp-mode
+(defun insert-lparen ()
+  (interactive)
+  (insert ?\())
+(defun insert-rparen ()
+  (interactive)
+  (insert ?\)))
+(defun insert-lbrack ()
+  (interactive)
+  (insert ?\[))
+(defun insert-rbrack ()
+  (interactive)
+  (insert ?\]))
+(evil-define-key 'insert racket-mode-map (kbd "[") 'insert-lparen)
+(evil-define-key 'insert racket-mode-map (kbd "]") 'insert-rparen)
+(evil-define-key 'insert racket-mode-map (kbd "(") 'insert-lbrack)
+(evil-define-key 'insert racket-mode-map (kbd "]") 'insert-rbrack)
+(evil-define-key 'insert emacs-lisp-mode-map (kbd "[") 'insert-lparen)
+(evil-define-key 'insert emacs-lisp-mode-map (kbd "]") 'insert-rparen)
+(evil-define-key 'insert emacs-lisp-mode-map (kbd "(") 'insert-lbrack)
+(evil-define-key 'insert emacs-lisp-mode-map (kbd "]") 'insert-rbrack)
+(evil-define-key 'insert lisp-mode-map (kbd "[") 'insert-lparen)
+(evil-define-key 'insert lisp-mode-map (kbd "]") 'insert-rparen)
+(evil-define-key 'insert lisp-mode-map (kbd "(") 'insert-lbrack)
+(evil-define-key 'insert lisp-mode-map (kbd "]") 'insert-rbrack)
+
+
 
 (load "troy-evil-utils.el")
 (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
@@ -557,7 +591,7 @@
 (setq evil-digraphs-table
       (delq (assoc '(?. ?.) evil-digraphs-table)
 	    evil-digraphs-table))
-(setq evil-digraphs-table-user 
+(setq evil-digraphs-table-user
       '(
 	((?. ?.) . ?\x2026)
 	((?, ?:) . ?\x2025)
@@ -596,33 +630,32 @@
 (require 'evil-leader)
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
-(defun open-init-file ()
-  (interactive)
-  (find-file "~/.emacs"))
 (evil-leader/set-key
-  "e" 'find-file
-  "b" 'switch-to-buffer
-  "k" 'kill-buffer
-  "." 'open-init-file
-  "v" 'eval-buffer
-  "a" 'ace-jump-word-mode
-  "f" 'ace-jump-char-mode
-  "g" 'ace-jump-line-mode
+  ;; "e" 'find-file
+  "s"  'load-init-file
+  "b"  'switch-to-buffer
+  "k"  'kill-buffer
+  "."  'open-init-file
+  "v"  'eval-region
+  "V"  'eval-buffer
+  "a"  'ace-jump-word-mode
+  "f"  'ace-jump-char-mode
+  "g"  'ace-jump-line-mode
   )
 
 ;; evil-matchit - installed via package manager
 (require 'evil-matchit)
 (global-evil-matchit-mode 1)
 
-;; evil-snipe
-(add-to-list 'load-path "/home/troy/evil-snipe") ;; remove when merged 
-(require 'evil-snipe)
-(global-evil-snipe-mode 1)
-;; ;; Optional!
-;; (evil-snipe-replace-evil) ;; replaces evil-mode's f/F/t/T/;/, with snipe
-;; (evil-snipe-enable-nN)    ;; enable repeating with n/N (not implemented)
-;; ;; not necessary if using (evil-snipe-replace-evil)
-;; (evil-snipe-enable-sS)    ;; enable repeating with s/S
+;; ;; evil-snipe
+;; (add-to-list 'load-path "/home/troy/evil-snipe") ;; remove when merged
+;; (require 'evil-snipe)
+;; (global-evil-snipe-mode 1)
+;; ;; ;; Optional!
+;; ;; (evil-snipe-replace-evil) ;; replaces evil-mode's f/F/t/T/;/, with snipe
+;; ;; (evil-snipe-enable-nN)    ;; enable repeating with n/N (not implemented)
+;; ;; ;; not necessary if using (evil-snipe-replace-evil)
+;; ;; (evil-snipe-enable-sS)    ;; enable repeating with s/S
 
 ;; evil-surround
 (require 'surround)
@@ -892,7 +925,7 @@
 
 ;; (or (getenv "OZHOME") (setenv "OZHOME" "/opt/mozart2"))
 (or (getenv "OZHOME") (setenv "OZHOME" "/usr"))
-(add-to-list 'load-path (concat (getenv "OZHOME") "/share/mozart/elisp")) 
+(add-to-list 'load-path (concat (getenv "OZHOME") "/share/mozart/elisp"))
 (require 'oz)
 (add-to-list 'auto-mode-alist '("\\.oz\\'" . oz-mode))
 (add-to-list 'auto-mode-alist '("\\.ozg\\'" . oz-gump-mode))
@@ -906,7 +939,6 @@
 (define-key oz-mode-map (kbd "C-c C-b") 'oz-feed-buffer)
 (define-key oz-mode-map (kbd "M-p") 'evil-scroll-line-up)
 (define-key oz-mode-map (kbd "M-n") 'evil-scroll-line-down)
-(global-set-key [f9] 'evil-mode)
 
 
 
@@ -946,8 +978,8 @@
  ;(require 'highlight-indentation)
  ;(add-hook 'python-mode-hook 'highlight-indentation)
 
-(add-to-list 'load-path "/home/troy/.emacs.d/python-mode.el/") 
-(setq py-install-directory "/home/troy/.emacs.d/python-mode.el/") 
+(add-to-list 'load-path "/home/troy/.emacs.d/python-mode.el/")
+(setq py-install-directory "/home/troy/.emacs.d/python-mode.el/")
 (require 'python-mode)
 (setq py-shell-name "ipython")
 (setq py-shell-name "/usr/bin/ipython")
@@ -1064,29 +1096,29 @@
 ;; **********
 
 (add-hook 'scheme-mode-hook 'my-scheme-mode-hook)
-(defun my-scheme-mode-hook () 
-  (setq font-lock-defaults 
-	'((scheme-font-lock-keywords 
-	   scheme-font-lock-keywords-1 
-	   my-scheme-font-lock-keywords) 
-	  nil t (("+-*/.<>=!?$%_&~^:" . "w")) beginning-of-defun 
+(defun my-scheme-mode-hook ()
+  (setq font-lock-defaults
+	'((scheme-font-lock-keywords
+	   scheme-font-lock-keywords-1
+	   my-scheme-font-lock-keywords)
+	  nil t (("+-*/.<>=!?$%_&~^:" . "w")) beginning-of-defun
 	  (font-lock-mark-block-function . mark-defun)))
-  (setq my-scheme-font-lock-keywords 
-	(append scheme-font-lock-keywords-2 
-		(eval-when-compile 
-		  (list 
-		   (regexp-opt '("compensate" "when") t) 
-		   ;;This must come before the errors specification, or 
-		   ;;"misc-error" will not be colored correctly. 
-		   (cons (regexp-opt '("wrong-type-arg" "misc-error" 
-				       "out-of-range" "system-error") t) 
-			 'font-lock-constant-face) 
-		   (cons (regexp-opt '("scm-error" "error" 
-				       "false-if-exception") t) 
+  (setq my-scheme-font-lock-keywords
+	(append scheme-font-lock-keywords-2
+		(eval-when-compile
+		  (list
+		   (regexp-opt '("compensate" "when") t)
+		   ;;This must come before the errors specification, or
+		   ;;"misc-error" will not be colored correctly.
+		   (cons (regexp-opt '("wrong-type-arg" "misc-error"
+				       "out-of-range" "system-error") t)
+			 'font-lock-constant-face)
+		   (cons (regexp-opt '("scm-error" "error"
+				       "false-if-exception") t)
 			 'font-lock-warning-face))))))
-(defconst my-scheme-font-lock-keywords 
-  '() 
-  "Custom highlighting in Scheme modes.") 
+(defconst my-scheme-font-lock-keywords
+  '()
+  "Custom highlighting in Scheme modes.")
 
 
 ;; *********
@@ -1161,7 +1193,7 @@
 ;; ***********
 (skewer-setup)
 
-;;---------------------------------------------------------------------------   
+;;---------------------------------------------------------------------------
 
 ;; ZOOM IN AND OUT.
 
@@ -1194,7 +1226,7 @@
 (defun sync-path ()
   (interactive)
   (let ((sh-path (split-string-and-unquote
-		  (shell-command-to-string 
+		  (shell-command-to-string
 		   ". ~/.bashrc &> /dev/null; echo -n $PATH 2> /dev/null")
 		  ":")))
     (setq exec-path (remove-dups (append exec-path sh-path)))))
@@ -1222,6 +1254,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (abort-recursive-edit)))
 
 (defun load-init-file ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+(defun open-init-file ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
@@ -1255,7 +1290,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (insert-char ?`))
 (define-key-multi-modes (kbd "C-'") 'insert-backquote
-  '(haskell-mode-map
+  '(shell-mode-map
+    haskell-mode-map
     markdown-mode-map))
 
 ;; Insert Continuation Symbol.
@@ -1281,8 +1317,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; *              *
 ;; ****************
 
+(global-set-key "\C-a" 'move-beginning-of-line-or-text)
+(global-set-key (kbd "C-S-l") #'backward-delete-char)
 (global-set-key (kbd "M-<backspace>") 'backward-kill-word)
-(global-set-key (kbd "M-DEL") '(lambda () (interactive) (kill-buffer nil)))
 (global-set-key (kbd "C-SPC") 'cua-set-mark)
 
 (global-set-key [\M-\S-up] 'move-text-up)
@@ -1292,9 +1329,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [\M-\S-\right] 'copy-current-line)
 
 
-(global-set-key "\C-a" 'move-beginning-of-line-or-text)
-;(global-set-key (kbd "M-;") 'comment-line-or-region)
-(global-set-key (kbd "C-S-O") 'insert-line-above)
 
 (global-set-key [f5] 'copy-region-as-kill) ; Copy
 (global-set-key [f6] 'kill-region)         ; Cut
@@ -1302,17 +1336,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [kp-home]  'beginning-of-buffer) ; [Home]
 (global-set-key [home]     'beginning-of-buffer) ; [Home]
 (global-set-key [kp-end]   'end-of-buffer)       ; [End]
-(global-set-key [end]      'end-of-buffer)       ; [End] 
+(global-set-key [end]      'end-of-buffer)       ; [End]
 (global-set-key [\M-f12]   'shell-pop)
 
-(global-set-key (kbd "C-S-l") #'backward-delete-char)
-;(global-set-key (kbd "M-;") 'comment-dwim)
+;(global-set-key (kbd "M-;") 'comment-dwim) ;; replaced by evil-nc- function
 ;(global-set-key "\M-f" 'forward-sexp)
 ;(global-set-key "\M-b" 'backward-sexp)
-(global-set-key "\M-sq" 'ucs-insert)
-(global-set-key "\C-\M-f" 'forward-word)
-(global-set-key "\C-\M-b" 'backward-word)
-(global-set-key "\C-z" 'undo)    ; [Undo] 
+(global-set-key "\M-sq" 'insert-char)
+(global-set-key "\C-z" 'undo)    ; [Undo]
 ;; (global-set-key "\M-1" 'goto-line)  ;; use "M-g g" or "M-g M-g"
 (global-set-key "\M-c" 'capitalize-word)
 (global-set-key (kbd "C-x C-9") 'variable-pitch-mode)
@@ -1321,6 +1352,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key "\M-o" 'occur)
 (global-set-key (kbd "C-x SPC") 'just-one-space)
 (global-set-key [M-f1] 'apropos-follow)
+
+(global-set-key (kbd "M-DEL") '(lambda () (interactive) (kill-buffer nil)))
+;; change C-x - from 'shrink-window-if-larger-than-buffer to 'fit-window-to-buffer
+(global-set-key (kbd "\C-x -") 'fit-window-to-buffer)
 
 ;; Scrolling Up & Down.
 (global-set-key (kbd "M-n") 'evil-scroll-line-down)
@@ -1336,17 +1371,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (if (file-exists-p kmacro-init)
       (load  kmacro-init)))
 ;; save-macro: from emacs-wiki, modified to use .emacs-kmacros
-(defun save-macro (name)                  
+(defun save-macro (name)
   "save a macro. Take a name as argument
-     and save the last defined macro under 
+     and save the last defined macro under
      this name in a .emacs-kmacros file"
-  (interactive "SName of the macro :")  ; ask for the name of the macro    
-  (kmacro-name-last-macro name)         ; use this name for the macro    
+  (interactive "SName of the macro :")  ; ask for the name of the macro
+  (kmacro-name-last-macro name)         ; use this name for the macro
   (find-file (concat user-init-file
-		     "-kmacros"))       ; open ~/.emacs or other user init file 
+		     "-kmacros"))       ; open ~/.emacs or other user init file
   (goto-char (point-max))               ; go to the end of the .emacs
   (newline)                             ; insert a newline
-  (insert-kbd-macro name)               ; copy the macro 
+  (insert-kbd-macro name)               ; copy the macro
   (newline)                             ; insert a newline
   (switch-to-buffer nil))               ; return to the initial buffer
 
@@ -1355,7 +1390,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; --------
 (defalias 'reyas 'yas/reload-all)
 (defalias 'boxcom 'box-heading-comment)
-(defalias 'init 'load-init-file)
+(defalias 'init 'open-init-file)
 (defalias 'arv 'auto-revert-mode)
 (defalias 'revb 'revert-buffer)
 (defalias 'sim 'set-input-method)  ;; bound to C-\

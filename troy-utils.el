@@ -14,7 +14,7 @@
       ""
     (let ((x  (car ls))
 	  (xs (cdr ls)))
-      (cond 
+      (cond
        ((stringp x) (lines x (flatlines xs)))
        ((listp x)   (apply #'flatlines (append x xs)))))))
 
@@ -161,16 +161,30 @@
   (save-excursion
     (move-end-of-line nil)
     (newline n)))
+
+
+
 (defun insert-line-above (n)
   (interactive "p")
-  (beginning-of-line)
-  (open-line n)
-  (indent-according-to-mode)
   (save-excursion
+    (beginning-of-line)
+    (open-line n)
+    (indent-according-to-mode)
     (dotimes (i (- n 1) nil)
       (next-line)
-      (indent-according-to-mode))))
-    
+      (indent-according-to-mode)))
+  (next-line n))
+(defun insert-line-below (n)
+  (interactive "p")
+  (save-excursion
+    (next-line)
+    (beginning-of-line)
+    (open-line n)
+    (dotimes (i (- n 1) nil)
+      (indent-according-to-mode)
+      (next-line))))
+
+
 ;; ***********************************
 ;; *                                 *
 ;; * ECLIPSE-STYLE BEGINNING-OF-LINE *
@@ -273,7 +287,7 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;       (push-mark (point))
 ;;       (move-end-of-line 1)
 ;;       (comment-or-uncomment-region (mark) (point)))))
-  
+
 ;; (defun comment-line-or-region (arg)
 ;;   "If the region is active and `transient-mark-mode' is on, call
 ;; `comment-region' (unless it only consists of comments, in which
@@ -356,8 +370,8 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;; from http://emacswiki.org/emacs/AlignCommands
 ;; GPL2
 (defun align-repeat (start end regexp)
-  "Repeat alignment with respect to 
+  "Repeat alignment with respect to
      the given regular expression."
   (interactive "r\nsAlign regexp: ")
-  (align-regexp start end 
+  (align-regexp start end
 		(concat "\\(\\s-*\\)" regexp) 1 1 t))

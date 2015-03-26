@@ -35,5 +35,6 @@ helm/
 popwin-el/
 python-mode/
 python-mode.el/
+semanticdb/
 snippets-downloaded/
 url/
