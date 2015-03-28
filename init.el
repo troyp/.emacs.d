@@ -190,9 +190,10 @@
   (interactive)
   (load "~/.emacs.d/math-input.el"))
 
-(require 'ibus)
-(add-hook 'after-init-hook 'ibus-mode-on)
-(setq ibus-cursor-color '("red" "blue"))
+;; (require 'ibus)
+;; ;; WARNING: ibus-mode steals "r" key from undo-tree
+;; (add-hook 'after-init-hook 'ibus-mode-on)
+;; (setq ibus-cursor-color '("red" "blue"))
 
 
 ;; **************************
@@ -463,13 +464,6 @@
 (define-key help-map "\C-m" 'discover-my-major)
 
 
-
-;; ----------
-;; undo-tree.
-;; ----------
-(require 'undo-tree)
-(global-undo-tree-mode)
-
 ;; **********
 ;; *        *
 ;; * SHELLS *
@@ -545,32 +539,6 @@
 (define-key package-menu-mode-map (kbd "k") #'evil-previous-line)
 (define-key package-menu-mode-map (kbd "<f3>") #'evil-search-forward)
 (define-key package-menu-mode-map (kbd "S-<f3>") #'evil-search-backward)
-;; racket-mode, emacs-lisp-mode, lisp-mode
-(defun insert-lparen ()
-  (interactive)
-  (insert ?\())
-(defun insert-rparen ()
-  (interactive)
-  (insert ?\)))
-(defun insert-lbrack ()
-  (interactive)
-  (insert ?\[))
-(defun insert-rbrack ()
-  (interactive)
-  (insert ?\]))
-(evil-define-key 'insert racket-mode-map (kbd "[") 'insert-lparen)
-(evil-define-key 'insert racket-mode-map (kbd "]") 'insert-rparen)
-(evil-define-key 'insert racket-mode-map (kbd "(") 'insert-lbrack)
-(evil-define-key 'insert racket-mode-map (kbd "]") 'insert-rbrack)
-(evil-define-key 'insert emacs-lisp-mode-map (kbd "[") 'insert-lparen)
-(evil-define-key 'insert emacs-lisp-mode-map (kbd "]") 'insert-rparen)
-(evil-define-key 'insert emacs-lisp-mode-map (kbd "(") 'insert-lbrack)
-(evil-define-key 'insert emacs-lisp-mode-map (kbd "]") 'insert-rbrack)
-(evil-define-key 'insert lisp-mode-map (kbd "[") 'insert-lparen)
-(evil-define-key 'insert lisp-mode-map (kbd "]") 'insert-rparen)
-(evil-define-key 'insert lisp-mode-map (kbd "(") 'insert-lbrack)
-(evil-define-key 'insert lisp-mode-map (kbd "]") 'insert-rbrack)
-
 
 
 (load "troy-evil-utils.el")
@@ -1195,30 +1163,50 @@
 
 ;;---------------------------------------------------------------------------
 
-;; ZOOM IN AND OUT.
+;; **********************
+;; *                    *
+;; * GLOBAL FONT HEIGHT *
+;; *                    *
+;; **********************
+;; note: for current buffer font-height only, use text-scale-adjust(C-x C-=, C-x C--)
 
-;; note: current buffer only, use text-scale-adjust(C-x C-+, C-x C--)
-
-;; globally, zoom text and window...
-;;by Vivek Haldar.
-(defun zoom-in ()
-  "Increase font size by 10 points"
+(defun get-font-size ()
+  "Returns the current default font size in decipoints"
   (interactive)
-  (set-face-attribute 'default nil
-		      :height
-		      (+ (face-attribute 'default :height)
-			 10)))
-(defun zoom-out ()
-  "Decrease font size by 10 points"
-  (interactive)
-  (set-face-attribute 'default nil
-      		      :height
-		      (- (face-attribute 'default :height)
-		         10)))
-;; change font size, interactively
-(global-set-key (kbd "C-=") 'zoom-in)
-(global-set-key (kbd "C-+") 'zoom-out)
+  (let ((font-height (face-attribute 'default :height)))
+    (message (number-to-string font-height))
+    font-height))
+  
+(defun set-font-size (FONT-HEIGHT-IN-POINTS)
+  "Sets the current default font size to FONT-HEIGHT in decipoints (defaults to 110 = 11pt)"
+  (interactive "p")
+  ;; if no argument was given, set to 110 = 11pt.
+  (if (= FONT-HEIGHT-IN-POINTS 1)
+      (setq FONT-HEIGHT-IN-POINTS 110))
+  (let ((font-height FONT-HEIGHT-IN-POINTS))
+    (set-face-attribute 'default nil
+			:height font-height)
+    font-height))
 
+(defun zoom-in (INC-HEIGHT)
+  "Increase font size by INC-HEIGHT decipoints (default 5 = 0.5 points)"
+  (interactive "p")
+  (if (= INC-HEIGHT 1)
+      (setq INC-HEIGHT 5))
+ (let ((font-height (+ (get-font-size)
+			INC-HEIGHT)))
+    (set-font-size font-height)
+    (message (number-to-string font-height))))
+
+(defun zoom-out (DEC-HEIGHT)
+  "Increase font size by DEC-HEIGHT decipoints (default 5 = 0.5pts)"
+  (interactive "p")
+  (if (= DEC-HEIGHT 1)
+      (setq DEC-HEIGHT 5))
+  (let ((font-height (- (get-font-size)
+			DEC-HEIGHT)))
+    (set-font-size font-height)
+    (message (number-to-string font-height))))
 
 ;; ------------------------------------------------------------------------
 ;; SET PATH CORRECTLY.
@@ -1402,3 +1390,4 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; FINAL
 (setq skeleton-pair nil)
+(put 'upcase-region 'disabled nil)
