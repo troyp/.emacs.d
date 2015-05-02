@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: display: none !important;
+# key: disnoi
+# --
+display: none !important; $0

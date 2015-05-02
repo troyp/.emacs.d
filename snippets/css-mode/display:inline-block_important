@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: display: inline-block !important;
+# key: disibi
+# --
+display: inline-block !important; $0

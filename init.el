@@ -7,6 +7,8 @@
 
 (server-start)
 
+(setq inhibit-startup-screen t)
+
 (global-font-lock-mode t)
 ;(electric-pair-mode 1)
 
@@ -274,17 +276,28 @@
 ;; ---------
 ;; yasnippet
 ;; ---------
-;; before auto-complete
+;; load before auto-complete
 (require 'yasnippet)
 (yas-global-mode 1)
 (setq yas-triggers-in-field t)  ; allow stacked expansion
+;; disable TAB for snippet expansion (replace with insert-mode_<C-.>)
+(eval-after-load "yasnippet"
+  '(progn
+     (define-key yas-minor-mode-map [(tab)]        nil)
+     (define-key yas-minor-mode-map (kbd "TAB")    nil)
+     (define-key yas-minor-mode-map (kbd "<tab>")  nil)))
 
 
 ;; ------------
 ;; auto-complete
 ;; ------------
+;; load AFTER yasnippet
 (require 'auto-complete)
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(ac-config-default)
 (add-hook 'prog-mode-hook (lambda () (auto-complete-mode t)))
+(ac-set-trigger-key "<tab>")
 
 ;; --------
 ;; semantic
@@ -849,6 +862,24 @@
 (setq j-command "bin/jconsole")
 
 
+;; **************
+;; *            *
+;; * Javascript *
+;; *            *
+;; **************
+
+;; add js2-minor-mode to js-mode
+(add-hook 'js-mode-hook 'js2-minor-mode)
+(add-hook 'js2-minor-mode-hook 'ac-js2-mode)
+
+;; default js mode: js2-mode
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+(setq js2-highlight-level 3)
+
+
 ;; ************
 ;; *          *
 ;; * Markdown *
@@ -1173,24 +1204,27 @@
 (defun get-font-size ()
   "Returns the current default font size in decipoints"
   (interactive)
-  (let ((font-height (face-attribute 'default :height)))
+  (let ((font-height (face-attribute 'default :height nil 'default)))
     (message (number-to-string font-height))
     font-height))
   
-(defun set-font-size (FONT-HEIGHT-IN-POINTS)
-  "Sets the current default font size to FONT-HEIGHT in decipoints (defaults to 110 = 11pt)"
-  (interactive "p")
-  ;; if no argument was given, set to 110 = 11pt.
-  (if (= FONT-HEIGHT-IN-POINTS 1)
-      (setq FONT-HEIGHT-IN-POINTS 110))
-  (let ((font-height FONT-HEIGHT-IN-POINTS))
-    (set-face-attribute 'default nil
-			:height font-height)
+(defun get-default-font-size ()
+  "Returns the current default font size in decipoints"
+  (interactive)
+  (let ((font-height (face-attribute 'default :height t 'default)))
+    (message (number-to-string font-height))
     font-height))
+
+(defun set-font-size (FONT-HEIGHT)
+  "Sets the current default font size to FONT-HEIGHT in decipoints (defaults to 110 = 11pt)"
+  (interactive "NNew Font Height in pts: ")
+  (set-face-attribute 'default nil :height FONT-HEIGHT)
+  FONT-HEIGHT)
 
 (defun zoom-in (INC-HEIGHT)
   "Increase font size by INC-HEIGHT decipoints (default 5 = 0.5 points)"
   (interactive "p")
+  ;; default increment: 5 decipoints
   (if (= INC-HEIGHT 1)
       (setq INC-HEIGHT 5))
  (let ((font-height (+ (get-font-size)
@@ -1201,6 +1235,7 @@
 (defun zoom-out (DEC-HEIGHT)
   "Increase font size by DEC-HEIGHT decipoints (default 5 = 0.5pts)"
   (interactive "p")
+  ;; default increment: 5 decipoints
   (if (= DEC-HEIGHT 1)
       (setq DEC-HEIGHT 5))
   (let ((font-height (- (get-font-size)
@@ -1229,6 +1264,10 @@
   (kill-buffer)
   (delete-window))
 (global-set-key "\C-xc" 'kill-and-close-window)
+
+(defun kill-current-buffer ()
+  (interactive)
+  (kill-buffer nil))
 
 ;; https://github.com/davvil/.emacs.d/blob/master/init.el
 (defun minibuffer-keyboard-quit ()
@@ -1341,7 +1380,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-x SPC") 'just-one-space)
 (global-set-key [M-f1] 'apropos-follow)
 
-(global-set-key (kbd "M-DEL") '(lambda () (interactive) (kill-buffer nil)))
+(global-set-key (kbd "M-DEL") 'kill-current-buffer)
 ;; change C-x - from 'shrink-window-if-larger-than-buffer to 'fit-window-to-buffer
 (global-set-key (kbd "\C-x -") 'fit-window-to-buffer)
 
@@ -1387,6 +1426,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'lim 'lisp-interaction-mode)
 (defalias 'el 'emacs-lisp-mode)
 (defalias 'ppr 'cl-prettyprint)
+(defalias 'chmodx 'make-executable)
 
 ;; FINAL
 (setq skeleton-pair nil)

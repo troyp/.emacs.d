@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: display: block !important;
+# key: disbi
+# --
+display: block !important; $0

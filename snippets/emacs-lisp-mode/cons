@@ -1,0 +1,4 @@
+#name: cons
+#key: cons
+# --
+(cons $1 $2)$0

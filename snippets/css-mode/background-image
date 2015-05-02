@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: background-image
+# key: bgi
+# --
+background-image: ${1:url("$2")}; $0

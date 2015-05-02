@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: font-size-adjust
+# key: fsza
+# --
+font-size-adjust: ${1:1.0}; $0

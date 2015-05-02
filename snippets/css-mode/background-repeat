@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: background-repeat
+# key: bgr
+# --
+background-repeat: ${1:no-repeat}; $0

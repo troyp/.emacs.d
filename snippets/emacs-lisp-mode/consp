@@ -1,0 +1,4 @@
+#name: consp
+#key: consp
+# --
+(consp $1)$0

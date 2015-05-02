@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: font-size
+# key: fsz
+# --
+font-size: ${1:medium}; $0
