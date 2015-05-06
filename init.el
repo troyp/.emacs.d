@@ -1427,6 +1427,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'el 'emacs-lisp-mode)
 (defalias 'ppr 'cl-prettyprint)
 (defalias 'chmodx 'make-executable)
+(defalias 'unset 'makunbound)
+(defalias 'unfset 'fmakunbound)
 
 ;; FINAL
 (setq skeleton-pair nil)

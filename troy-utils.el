@@ -18,6 +18,9 @@
        ((stringp x) (lines x (flatlines xs)))
        ((listp x)   (apply #'flatlines (append x xs)))))))
 
+(defun explode (s)
+  (string-split s ""))
+
 (defun printed (s)
   "Returns the printed representation of object s."
   (print s (lambda (c) nil)))
@@ -51,11 +54,11 @@
   (make-symbol (apply 'concat (mapcar 'symbol-name syms))))
 
 
-;; ******************************
-;; *                            *
-;; * HEADING PRINTING FUNCTIONS *
-;; *                            *
-;; ******************************
+;; *************************
+;; *                       *
+;; * BOX HEADING FUNCTIONS *
+;; *                       *
+;; *************************
 
 (defvar *box-heading-symbol* ?*)
 (defvar *box-heading-margin* 1)
@@ -106,11 +109,11 @@
 	       h-border-bottom)))
 
 (defun box-heading (s)
-  (interactive)
+  (interactive "s")
   (insert (box-heading-string s)))
 
 (defun box-heading-custom (s syms)
-  (interactive)
+  (interactive "s")
   (let ((*box-heading-symbol* syms))
     (box-heading s)))
 
@@ -118,6 +121,56 @@
   (interactive "s" "heading: ")
   (let ((start (point)))
     (box-heading s)
+    (comment-region start (point))))
+
+;;  ______________________ 
+;; |                      |
+;; | RECTANGULAR HEADINGS |
+;; |______________________|
+;;
+;; Borders can be omitted to join adjacent rectangles
+
+(defvar *rect-heading-omit-left*)
+(defvar *rect-heading-omit-right*)
+(defvar *rect-heading-omit-top*)
+(defun rect-heading-string (s)
+  (interactive)
+  (unless (boundp '*rect-heading-omit-top*) (setq *rect-heading-omit-top* nil))
+  (unless (boundp '*rect-heading-omit-left*) (setq *rect-heading-omit-left* nil))
+  (unless (boundp '*rect-heading-omit-right*) (setq *rect-heading-omit-right* nil))
+  (let* ((lines (split-string s "\n"))
+	 (n     (apply #'max (mapcar 'length lines)))
+	 (d     (or *box-heading-margin* 1))
+	 (spc   32)    ; space
+	 (N     (+ n 2 (* 2 d)))
+	 (lspc  (if *rect-heading-omit-left* "" " "))
+	 (rspc  (if *rect-heading-omit-right* "" " "))
+	 (l  (if *rect-heading-omit-left* "" "|"))
+	 (r  (if *rect-heading-omit-right* "" "|"))
+
+	 (v-margin         (make-string d spc))
+	 (h-top            (concat lspc (make-string (- N 2) ?_) rspc))
+	 (h-bottom         (concat l (make-string (- N 2) ?_) r))
+	 (h-margin         (concat l (make-string (- N 2) spc) r))
+	 (textlines        (mapcar
+			    (lambda (s)
+			      (concat l v-margin s
+				      (make-string (- n (length s)) spc)
+				      v-margin r))
+			    lines))
+	 (lines            (append
+			    (if *rect-heading-omit-top* nil (list h-top))
+			    (list h-margin textlines h-bottom))))
+    (funcall 'flatlines lines)))
+
+(defun rect-heading (s)
+  (interactive "s")
+  (insert (rect-heading-string s)))
+
+(defun rect-heading-comment (s)
+  (interactive "s" "heading: ")
+  (let ((start (point)))
+    (rect-heading s)
     (comment-region start (point))))
 
 
