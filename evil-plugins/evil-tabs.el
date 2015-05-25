@@ -26,13 +26,45 @@
   (elscreen-create)
   (find-file file))
 
+(evil-define-command evil-tab-sensitive-quit (&optional bang)
+  :repeat nil
+  (interactive "<!>")
+  (if (> (length (elscreen-get-screen-list)) 1)
+    (elscreen-kill)
+    (evil-quit bang)))
+
+(evil-define-command evil-tabs-current-buffer-to-tab ()
+  (let ((nwindows (length (window-list)))
+        (cb (current-buffer)))
+    (when (> nwindows 1)
+      (delete-window)
+      (elscreen-create)
+      (switch-to-buffer cb))))
+
+(evil-define-motion evil-tabs-goto-tab (&optional count)
+  (if count
+     (elscreen-goto (- count 1))
+     (elscreen-next)))
+
 (evil-ex-define-cmd "tabe[dit]" 'evil-tabs-tabedit)
+(evil-ex-define-cmd "tabclone" 'elscreen-clone)
 (evil-ex-define-cmd "tabc[lose]" 'elscreen-kill)
-(evil-ex-define-cmd "tabn[ew]" 'elscreen-create)
+(evil-ex-define-cmd "tabd[isplay]" 'elscreen-toggle-display-tab)
+(evil-ex-define-cmd "tabg[oto]" 'elscreen-goto)
+(evil-ex-define-cmd "tabo[nly]" 'elscreen-kill-others)
+(evil-ex-define-cmd "tabnew" 'elscreen-create)
+(evil-ex-define-cmd "tabn[ext]" 'elscreen-next)
+(evil-ex-define-cmd "tabp[rev]" 'elscreen-previous)
+(evil-ex-define-cmd "tabr[ename]" 'elscreen-screen-nickname)
+(evil-ex-define-cmd "tabs[elect]" 'elscreen-select-and-goto)
+(evil-ex-define-cmd "tabw[ith]" 'elscreen-find-and-goto-by-buffer)
+(evil-ex-define-cmd "q[uit]" 'evil-tab-sensitive-quit)
 
 (evil-define-key 'normal evil-tabs-mode-map
   "gt" 'elscreen-next
-  "gT" 'elscreen-previous)
+  "gT" 'elscreen-previous
+  "gt" 'evil-tabs-goto-tab
+  "T" 'evil-tabs-current-buffer-to-tab)
 
 ;;;###autoload
 (define-minor-mode evil-tabs-mode

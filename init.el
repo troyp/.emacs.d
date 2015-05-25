@@ -603,6 +603,7 @@
 
 ;; evil-numbers
 (require 'evil-numbers)
+;; also use LEADER-> and LEADER-< in normal-state
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
@@ -622,6 +623,8 @@
   "a"  'ace-jump-word-mode
   "f"  'ace-jump-char-mode
   "g"  'ace-jump-line-mode
+  ">"  'evil-numbers/inc-at-pt
+  "<"  'evil-numbers/dec-at-pt
   )
 
 ;; evil-matchit - installed via package manager
@@ -875,6 +878,7 @@
 ;; default js mode: js2-mode
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsm$" . js2-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 (setq js2-highlight-level 3)
@@ -1352,10 +1356,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [\M-\S-up] 'move-text-up)
 (global-set-key [\M-\S-down] 'move-text-down)
 (global-set-key [\M-\S-\delete] 'remove-current-line)
-(global-set-key [\M-\S-\left] 'cut-current-line)
-(global-set-key [\M-\S-\right] 'copy-current-line)
-
-
+;; (global-set-key [\M-\S-\left] 'cut-current-line)
+;; (global-set-key [\M-\S-\right] 'copy-current-line)
+(global-set-key [\M-\S-\left] 'open-line-above)
+(global-set-key [\M-\S-\right] 'open-line-below)
 
 (global-set-key [f5] 'copy-region-as-kill) ; Copy
 (global-set-key [f6] 'kill-region)         ; Cut
@@ -1417,6 +1421,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; --------
 (defalias 'reyas 'yas/reload-all)
 (defalias 'boxcom 'box-heading-comment)
+(defalias 'reccom 'rect-heading-comment)
 (defalias 'init 'open-init-file)
 (defalias 'arv 'auto-revert-mode)
 (defalias 'revb 'revert-buffer)
@@ -1429,6 +1434,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'chmodx 'make-executable)
 (defalias 'unset 'makunbound)
 (defalias 'unfset 'fmakunbound)
+(defalias 'vll 'visual-line-mode)
 
 ;; FINAL
 (setq skeleton-pair nil)

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: #!/usr/bin/env bash
+# key: bash
+# --
+#!/usr/bin/env bash
+
+$0

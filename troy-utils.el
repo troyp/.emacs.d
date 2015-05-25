@@ -1,5 +1,9 @@
 (fset 'id 'identity)
 
+(defmacro has-value-p (sym)
+  "(has-value-p SYM): Returns t if SYM is bound and non-null, nil otherwise"
+  `(and (boundp ',sym) ,sym t))
+
 (defun zap-upto-char (arg char)
   (interactive "p\nczap up to char: ")
   (zap-to-char arg char)
@@ -17,6 +21,9 @@
       (cond
        ((stringp x) (lines x (flatlines xs)))
        ((listp x)   (apply #'flatlines (append x xs)))))))
+
+(defun repeat (n s)
+  (apply 'concat (make-list n s)))
 
 (defun explode (s)
   (string-split s ""))
@@ -62,13 +69,15 @@
 
 (defvar *box-heading-symbol* ?*)
 (defvar *box-heading-margin* 1)
+(defvar *box-heading-vmargin* 1)
 (defvar *banner-heading-symbol* ?=)
 (defvar *heading-symbol* ?-)
 
 (defun box-heading-string (s)
   (interactive)
-  (unless (boundp '*box-heading-symbol*) (setq *box-heading-symbol* "**"))
-  (unless (boundp '*box-heading-margin*) (setq *box-heading-margin* 1))
+  (unless (has-value-p *box-heading-symbol*) (setq *box-heading-symbol* "**"))
+  (unless (has-value-p *box-heading-margin*) (setq *box-heading-margin* 1))
+  (unless (has-value-p *box-heading-vmargin*) (setq *box-heading-vmargin* *box-heading-margin*))
   (let* ((lines (split-string s "\n"))
 	 (n     (apply #'max (mapcar 'length lines)))
 	 (d     (or *box-heading-margin* 1))
@@ -96,7 +105,8 @@
 	 (v-margin         (make-string d spc))
 	 (h-border-top     (concat nw (make-string (- N 2) hsym) ne))
 	 (h-border-bottom  (concat sw (make-string (- N 2) hsym-bottom) se))
-	 (h-margin         (concat (string vsym) (make-string (- N 2) spc) (string vsym-right)))
+	 (h-margin-line    (concat (string vsym) (make-string (- N 2) spc) (string vsym-right)))
+	 (h-margin         (make-list *box-heading-vmargin* h-margin-line))
 	 (textlines        (mapcar (lambda (s)
 				     (concat (string vsym) v-margin s
 					     (make-string (- n (length s)) spc)
@@ -108,20 +118,10 @@
 	       h-margin
 	       h-border-bottom)))
 
-(defun box-heading (s)
-  (interactive "s")
-  (insert (box-heading-string s)))
-
-(defun box-heading-custom (s syms)
-  (interactive "s")
+(defun box-heading-custom-string (s syms)
   (let ((*box-heading-symbol* syms))
-    (box-heading s)))
+    (box-heading-string s)))
 
-(defun box-heading-comment (s)
-  (interactive "s" "heading: ")
-  (let ((start (point)))
-    (box-heading s)
-    (comment-region start (point))))
 
 ;;  ______________________ 
 ;; |                      |
@@ -135,9 +135,9 @@
 (defvar *rect-heading-omit-top*)
 (defun rect-heading-string (s)
   (interactive)
-  (unless (boundp '*rect-heading-omit-top*) (setq *rect-heading-omit-top* nil))
-  (unless (boundp '*rect-heading-omit-left*) (setq *rect-heading-omit-left* nil))
-  (unless (boundp '*rect-heading-omit-right*) (setq *rect-heading-omit-right* nil))
+  (unless (has-value-p *rect-heading-omit-top*)   (setq *rect-heading-omit-top* nil))
+  (unless (has-value-p *rect-heading-omit-left*)  (setq *rect-heading-omit-left* nil))
+  (unless (has-value-p *rect-heading-omit-right*) (setq *rect-heading-omit-right* nil))
   (let* ((lines (split-string s "\n"))
 	 (n     (apply #'max (mapcar 'length lines)))
 	 (d     (or *box-heading-margin* 1))
@@ -163,15 +163,68 @@
 			    (list h-margin textlines h-bottom))))
     (funcall 'flatlines lines)))
 
-(defun rect-heading (s)
-  (interactive "s")
-  (insert (rect-heading-string s)))
+(defun rect-heading-under (s)
+  (let ((*rect-heading-omit-top* 't))
+    (rect-heading s)))
+(defun rect-heading-right (s)
+  (let ((*rect-heading-omit-left* 't))
+    (rect-heading s)))
+(defun rect-heading-left (s)
+  (let ((*rect-heading-omit-right* 't))
+    (rect-heading s)))
+(defun rect-heading-above (s)
+  (let ((*rect-heading-omit-bottom* 't))
+    (rect-heading s)))
 
-(defun rect-heading-comment (s)
-  (interactive "s" "heading: ")
-  (let ((start (point)))
-    (rect-heading s)
-    (comment-region start (point))))
+(defun short-rect-heading-string (s)
+  (let ((*box-heading-vmargin* 0)
+	(*box-heading-symbol* "--||,,''"))
+    (box-heading-string s)))
+
+
+;;  __________________ 
+;; |                  |
+;; | HEADING COMMANDS |
+;; |__________________|
+
+(defun make-heading-command (heading-string-fn-sym)
+  `(lambda (s)
+     (interactive "s")
+     (insert (,heading-string-fn-sym s))))
+
+(fset 'box-heading (make-heading-command 'box-heading-string))
+(fset 'rect-heading (make-heading-command 'rect-heading-string))
+(fset 'short-rect-heading (make-heading-command 'short-rect-heading-string))
+
+(defun make-heading-comment (heading-fn-sym)
+  `(lambda (s)
+     (interactive "s" "heading: ")
+     (let ((start (point)))
+	 (,heading-fn-sym s)
+	 (comment-region start (point)))))
+
+(fset 'box-heading-comment  (make-heading-comment 'box-heading))
+(fset 'rect-heading-comment (make-heading-comment 'rect-heading))
+
+;; 2-argument commands
+;; TODO: write make-heading-command taking variable arguments
+(defun make-heading-command-2 (heading-string-fn-sym param-name)
+  `(lambda (s param)
+     (interactive "s" param-name)
+     (insert (,heading-string-fn-sym s param))))
+(fset 'box-heading-custom (make-heading-command-2 'box-heading-custom-string "syms"))
+
+
+(defun srh-section (s &optional n &optional ch)
+  (interactive "sheading: ")
+  (unless n (setf n 65))
+  (unless ch (setf ch ?-))
+  (let ((divider (make-string n ch)))
+    (insert
+     (flatlines
+      (list divider
+	    (short-rect-heading-string s)
+	    divider)))))
 
 
 ;; *******************************
@@ -203,39 +256,24 @@
     (newline)
     (yank)
     (move-to-column orig-col)))
-(defun new-line-above (n)
+
+;; open-line functions:
+;; FIXME: functions work, but when reversed, leave cursor where new line was
+
+(defun open-line-above (n)
   (interactive "p")
   (save-excursion
+    (push (point) buffer-undo-list)
     (previous-line 1)
     (move-end-of-line nil)
     (newline n)))
-(defun new-line-below (n)
+
+(defun open-line-below (n)
   (interactive "p")
   (save-excursion
+    (push (point) buffer-undo-list)
     (move-end-of-line nil)
-    (newline n)))
-
-
-
-(defun insert-line-above (n)
-  (interactive "p")
-  (save-excursion
-    (beginning-of-line)
-    (open-line n)
-    (indent-according-to-mode)
-    (dotimes (i (- n 1) nil)
-      (next-line)
-      (indent-according-to-mode)))
-  (next-line n))
-(defun insert-line-below (n)
-  (interactive "p")
-  (save-excursion
-    (next-line)
-    (beginning-of-line)
-    (open-line n)
-    (dotimes (i (- n 1) nil)
-      (indent-according-to-mode)
-      (next-line))))
+    (open-line n)))
 
 
 ;; ***********************************
@@ -320,12 +358,12 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
     (find-file f wildcards)))
 
 
-; functionality replaced by evil-nerd-commenter
 ;; ;; ************
 ;; ;; *          *
 ;; ;; * COMMENTS *
 ;; ;; *          *
 ;; ;; ************
+; functionality replaced by evil-nerd-commenter
 
 ;; (defun comment-line (arg)
 ;;   "Comment out or uncomment a single line, n lines below the current line."
