@@ -515,6 +515,7 @@
 ;; Modes starting in Emacs state:
 (loop for mode in
       '(comint-mode  ;; not working for comint-mode?
+	shell-mode
 	dired-mode)
       do (add-to-list 'evil-emacs-state-modes mode))
 
@@ -554,7 +555,7 @@
 (define-key package-menu-mode-map (kbd "S-<f3>") #'evil-search-backward)
 
 
-(load "troy-evil-utils.el")
+(load "troyp/evil-utils.el")
 (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
 
 ;; ESC quits everything:
@@ -754,7 +755,7 @@
 			(other . "gnu")))
 (load "c++-fontlock-custom")
 (load "c++-fontlock-fix-enum-class.el")
-(load "c++-utils.el")
+(load "troyp/c++-utils.el")
 
 ;; make _ part of words
 (modify-syntax-entry ?_ "w" c-mode-syntax-table)
@@ -1296,7 +1297,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; LOAD AUXILLARY FILES.
 
 (setq aux-elisp-files
-      '("~/.emacs.d/troy-utils.el"
+      '("~/.emacs.d/troyp/utils.el"
+	"~/.emacs.d/troyp/headings.el"
 	"~/.emacs.d/smooth-scrolling.el"
 	"~/.emacs.d/move-text.el"))
 (loop for f in aux-elisp-files do
@@ -1361,9 +1363,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [\M-\S-\left] 'open-line-above)
 (global-set-key [\M-\S-\right] 'open-line-below)
 
-(global-set-key [f5] 'copy-region-as-kill) ; Copy
-(global-set-key [f6] 'kill-region)         ; Cut
-(global-set-key [f7] 'yank)                ; Paste
 (global-set-key [kp-home]  'beginning-of-buffer) ; [Home]
 (global-set-key [home]     'beginning-of-buffer) ; [Home]
 (global-set-key [kp-end]   'end-of-buffer)       ; [End]
