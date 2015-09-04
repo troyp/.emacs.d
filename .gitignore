@@ -32,9 +32,15 @@ eshell/
 evil/
 evil-matchit/
 helm/
+image-dired/
 popwin-el/
 python-mode/
 python-mode.el/
 semanticdb/
 snippets-downloaded/
 url/
+TAGS
+GTAGS
+GRTAGS
+GPATH
+GSYMS

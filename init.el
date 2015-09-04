@@ -32,6 +32,7 @@
 (setq mouse-wheel-progressive-speed nil)
 ;(setq shift-select-mode nil)
 
+(setq scroll-preserve-screen-position 'always)
 (setq hscroll-margin 5)
 (setq hscroll-step 1)
 
@@ -45,6 +46,9 @@
 (load custom-file)
 (add-to-list 'Info-default-directory-list "~/.emacs.d/info")
 
+(setq ediff-split-window-function 
+      (if (> (frame-width) 140) 'split-window-horizontally 
+	'split-window-vertically))
 
 ;; **********************
 ;; *                    *
@@ -54,6 +58,9 @@
 
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/plugins")
+(add-to-list 'load-path "~/.emacs.d/dash.el")
+
+(require 'dash)
 
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
@@ -103,37 +110,79 @@
 ;; to byte (re)compile .emacs.d:
 ;;   (byte-recompile-directory "/home/troy/.emacs.d" 0 t)
 
+;; ===========================================================================
 ;; ****************
 ;; *              *
 ;; *  APPEARANCE  *
 ;; *              *
 ;; ****************
+;; ---------------------------------------------------------------------------
+;; ,-----------------,
+;; | Theme variables |
+;; '-----------------'
 
-(setq my-themes '(adwaita zenburn misterioso sanityinc-tomorrow-night
-			  sanityinc-tomorrow-eighties sanityinc-tomorrow-day))
-(setq light-theme 'adwaita)
-(setq dark-theme 'sanityinc-tomorrow-night)
-(load-theme dark-theme t)
-;; (setq current-theme dark-theme)
+(setq dark-themes
+      '(zenburn
+	hc-zenburn
+	misterioso
+	sanityinc-tomorrow-night
+	sanityinc-tomorrow-eighties))
+(setq light-themes
+      '(adwaita
+	sanityinc-tomorrow-day))
+(setq mode-line-themes
+      '(smart-mode-line-light
+	smart-mode-line-dark))
 
-(defun theme (thm)
-  (interactive "Stheme: ")
-  (load-theme thm t)
-  (setq current-theme thm))
+(setq primary-light-theme 'adwaita)
+(setq primary-dark-theme 'hc-zenburn)
+
+;; ---------------------------------------------------------------------------
+;; ,-----------------,
+;; | Theme functions |
+;; '-----------------'
+
+(defun light-theme-p (theme)
+  (memq theme light-themes))
+(defun dark-theme-p (theme)
+  (memq theme dark-themes))
+(defun mode-line-theme-p (theme)
+  (memq theme mode-line-themes))
+
+(defun current-theme ()
+  (car (--drop-while (mode-line-theme-p it) theme-history)))
 
 (defun toggle-theme ()
   (interactive)
-  (if (eq current-theme light-theme)
-      (theme dark-theme)
-    (theme light-theme)))
+  (if (light-theme-p (current-theme))
+      (theme primary-dark-theme)
+    (theme primary-light-theme)))
 (defalias 'tt 'toggle-theme)
 
-(set-face-attribute 'fringe nil :background "#555")  ;; set fringe to dark gray
+(setq theme-history nil)
+(defadvice load-theme 
+  (after push-history (THEME &optional NO-CONFIRM NO-ENABLE) activate)
+  "Push THEME onto `theme-history' (init.el)"
+  (setq theme-history (cons THEME theme-history)))
+
+(load-theme primary-dark-theme t)
+(load-theme 'smart-mode-line-light t)
+
+;; ---------------------------------------------------------------------------
+;; ,--------,
+;; | Fringe |
+;; '--------'
+
+;; Fringe:
+;; (set-face-attribute 'fringe nil :background "#555")  ;; set fringe to dark gray
 (set-fringe-mode '(1 . 1))  ;; set fringe to 1px at left and right
 
+;; ---------------------------------------------------------------------------
+;; ,----------------,
+;; | Variable Pitch |
+;; '----------------'
+;; C-x C-9
 
-;; variable-pitch-mode. (C-x C-9)
-;; --------------------
 (defun set-vfont ()
   (interactive)
   (overlay-put (make-overlay (point-min) (point-max) nil nil t)
@@ -152,16 +201,11 @@
 ;; 		info-mode-hook))
 ;;   (set-mode-to-vpitch hook))
 
-;; ------
-;; imenu.
-;; ------
-(defun try-to-add-imenu ()
-  (condition-case nil (imenu-add-to-menubar "imenu") (error nil)))
-(add-hook 'font-lock-mode-hook 'try-to-add-imenu)
+;; ---------------------------------------------------------------------------
+;; ,-----------------,
+;; | Smart Mode Line |
+;; '-----------------'
 
-;; ---------------
-;; smart-mode-line
-;; ---------------
 (sml/setup)
 (setq sml/replacer-regexp-list
       '(("^~/org/" ":Org:")
@@ -180,6 +224,13 @@
 ;; ---------
 (require 'uniquify)    ;; remove in emacs24.4
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+
+;; ------
+;; imenu.
+;; ------
+(defun try-to-add-imenu ()
+  (condition-case nil (imenu-add-to-menubar "imenu") (error nil)))
+(add-hook 'font-lock-mode-hook 'try-to-add-imenu)
 
 
 ;; ***********
@@ -314,16 +365,35 @@
 ;; *                          *
 ;; ****************************
 
-;; -----
-;; eldoc
-;; -----
+(defalias 'findlib 'find-library)
+
+;; ---------------------------------------------------------------------------
+;; ,-------,
+;; | Etags |
+;; '-------'
+
+;; <Emacs mode>___M-.        :  find-tags
+;; <Normal mode>__<Leader>.  :  find-tags
+
+(defun build-tags (dir)
+  (interactive "DDirectory: ")
+  (shell-command
+   (concat "etags -R " dir)))
+
+;; ---------------------------------------------------------------------------
+;; ,-------,
+;; | Eldoc |
+;; '-------'
+
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
 
-;; ------
-;; ggtags
-;; ------
+;; ---------------------------------------------------------------------------
+;; ,---------------,
+;; | Global ggtags |
+;; '---------------'
+
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
@@ -354,7 +424,9 @@
 (require 'dired-efap)
 (define-key dired-mode-map [f2] 'dired-efap)
 (define-key dired-mode-map [down-mouse-1] 'dired-efap-click)
-(setq-default dired-listing-switches "-alhv")
+(setq-default dired-listing-switches "-lXGh --group-directories-first")
+(setq dired-alt-listing-switches "-alhv")
+
 
 (require 'dired-imenu)
 (add-hook
@@ -386,10 +458,10 @@
 ;; buffer-move
 ;; -----------
 (require 'buffer-move)
-(global-set-key (kbd "<C-S-up>")     'buf-move-up)
-(global-set-key (kbd "<C-S-down>")   'buf-move-down)
-(global-set-key (kbd "<C-S-left>")   'buf-move-left)
-(global-set-key (kbd "<C-S-right>")  'buf-move-right)
+(global-set-key (kbd "<M-S-up>")     'buf-move-up)
+(global-set-key (kbd "<M-S-down>")   'buf-move-down)
+(global-set-key (kbd "<M-S-left>")   'buf-move-left)
+(global-set-key (kbd "<M-S-right>")  'buf-move-right)
 
 ;; ---------------
 ;; transpose-frame
@@ -504,11 +576,13 @@
 (require 'evil)
 (evil-mode 1)
 
+;; evil-symbol-word-search
 (setq-default evil-symbol-word-search t)
 (defun toggle-evil-symbol-word-search ()
   (interactive)
   (setf evil-symbol-word-search (not evil-symbol-word-search)))
 (defalias 'evsw 'toggle-evil-symbol-word-search)
+(define-key evil-normal-state-map (kbd "C-*") #'toggle-evil-symbol-word-search)
 
 (defalias 'evl 'evil-local-mode)
 
@@ -519,21 +593,30 @@
 	dired-mode)
       do (add-to-list 'evil-emacs-state-modes mode))
 
+;; remove C-w C-h binding (steals C-h from help system)
+(define-key evil-window-map "\C-h" nil)
 
 (add-to-list 'evil-overriding-maps '(yas-minor-mode-map . insert))
+;; normal-state
 (define-key evil-normal-state-map (kbd "TAB") #'indent-for-tab-command)
+(define-key evil-normal-state-map (kbd "C-S-d") #'evil-scroll-up)
 (define-key evil-normal-state-map (kbd "C-S-o") #'evil-jump-forward)
 (define-key evil-normal-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
+(define-key evil-normal-state-map (kbd "C-;") #'evil-repeat-find-char-reverse)
 (define-key evil-normal-state-map (kbd "[ SPC") #'insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") #'insert-line-below)
 (define-key evil-normal-state-map (kbd "[ b") #'switch-to-prev-buffer)
 (define-key evil-normal-state-map (kbd "] b") #'switch-to-next-buffer)
+(define-key evil-normal-state-map (kbd "C-y") nil)
+(define-key evil-normal-state-map (kbd "gu") #'evil-upcase)
+(define-key evil-normal-state-map (kbd "gU") #'evil-downcase)
+;; motion state
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
+;; insert state
 (define-key evil-insert-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-S-y") #'evil-copy-from-below)
 (define-key evil-insert-state-map (kbd "C-v") #'insert-char)
-(define-key evil-normal-state-map (kbd "C-y") nil)
 (define-key evil-insert-state-map (kbd "C-l") #'delete-char)
 (define-key evil-insert-state-map (kbd "C-S-l") #'backward-delete-char)
 (define-key evil-insert-state-map (kbd "C-k") #'evil-insert-digraph)
@@ -569,7 +652,7 @@
 
 (evil-add-command-properties 'move-beginning-of-line-or-text :repeat 'ignore)
 
-
+;; digraphs
 (setq evil-digraphs-table
       (delq (assoc '(?. ?.) evil-digraphs-table)
 	    evil-digraphs-table))
@@ -578,12 +661,7 @@
 	((?. ?.) . ?\x2026)
 	((?, ?:) . ?\x2025)
 	))
-(defun evil-enter-digraphs nil
-  (interactive)
-  (with-demoted-errors
-    (evil-insert-digraph 1)
-    (evil-enter-digraphs)))
-(defalias 'digra 'evil-enter-digraphs)
+(defalias 'digra 'evil-enter-digraphs)  ;; evil-utils
 
 ;; plugins...
 (add-to-list 'load-path "~/.emacs.d/evil-plugins")
@@ -614,11 +692,11 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
-  ;; "e" 'find-file
+  "e"  'helm-find-file
   "s"  'load-init-file
   "b"  'switch-to-buffer
   "k"  'kill-buffer
-  "."  'open-init-file
+  "i"  'open-init-file
   "v"  'eval-region
   "V"  'eval-buffer
   "a"  'ace-jump-word-mode
@@ -626,6 +704,7 @@
   "g"  'ace-jump-line-mode
   ">"  'evil-numbers/inc-at-pt
   "<"  'evil-numbers/dec-at-pt
+  "."  'find-tag
   )
 
 ;; evil-matchit - installed via package manager
@@ -646,12 +725,12 @@
 (require 'surround)
 (global-surround-mode 1)
 
-;; evil-tabs
-(require 'evil-tabs)
-(global-evil-tabs-mode t)
-(defun tabs ()
-  (interactive)
-  (elscreen-toggle-display-tab))
+;; ;; evil-tabs
+;; (require 'evil-tabs)
+;; (global-evil-tabs-mode t)
+;; (defun tabs ()
+;;   (interactive)
+;;   (elscreen-toggle-display-tab))
 
 ;; evil-visualstar
 (require 'evil-visualstar)
@@ -681,6 +760,16 @@
 
 (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?-?\\w*$" . vimrc-mode))
 (add-to-list 'auto-mode-alist '("\\.pentadactylrc-?\\w*$" . vimrc-mode))
+
+;; ************
+;; *          *
+;; * Dotfiles *
+;; *          *
+;; ************
+
+(add-to-list 'auto-mode-alist '("\\.keynavrc$" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.bash[[:alnum:]-\.]*$" . shell-script-mode))
+
 
 
 ;; **********
@@ -873,7 +962,10 @@
 ;; **************
 
 ;; add js2-minor-mode to js-mode
-(add-hook 'js-mode-hook 'js2-minor-mode)
+(add-hook 'js-mode-hook
+	  '(lambda ()
+	     (js2-minor-mode)
+	     (define-key js2-mode-map (kbd "C-c C-u") 'js2-cancel-error-face)))
 (add-hook 'js2-minor-mode-hook 'ac-js2-mode)
 
 ;; default js mode: js2-mode
@@ -883,6 +975,9 @@
 (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 (setq js2-highlight-level 3)
+(defun js2-cancel-error-face ()
+  (interactive)
+  (face-remap-add-relative 'js2-error nil))
 
 
 ;; ************
@@ -1197,6 +1292,18 @@
 ;; ***********
 (skewer-setup)
 
+(defun htmlentify (start end)
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (beginning-of-buffer)
+      (replace-string "&" "&amp;")
+      (beginning-of-buffer)
+      (replace-string "<" "&lt;")
+      (beginning-of-buffer)
+      (replace-string ">" "&gt;"))))
+
 ;;---------------------------------------------------------------------------
 
 ;; **********************
@@ -1350,18 +1457,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; *              *
 ;; ****************
 
+(defun get-face (&optional pos)
+  (interactive)
+  (message "face: %s" (get-char-property (or pos (point)) 'face)))
+(global-set-key [f8] 'get-face)
+(global-set-key [\M-f8] 'what-cursor-position)
+(global-set-key [\C-f8] 'describe-char)
+(global-set-key [\S-f8] 'palette-foreground-at-point)
+
+
 (global-set-key "\C-a" 'move-beginning-of-line-or-text)
 (global-set-key (kbd "C-S-l") #'backward-delete-char)
 (global-set-key (kbd "M-<backspace>") 'backward-kill-word)
 (global-set-key (kbd "C-SPC") 'cua-set-mark)
 
-(global-set-key [\M-\S-up] 'move-text-up)
-(global-set-key [\M-\S-down] 'move-text-down)
-(global-set-key [\M-\S-\delete] 'remove-current-line)
-;; (global-set-key [\M-\S-\left] 'cut-current-line)
-;; (global-set-key [\M-\S-\right] 'copy-current-line)
-(global-set-key [\M-\S-\left] 'open-line-above)
-(global-set-key [\M-\S-\right] 'open-line-below)
+(global-set-key [\C-\S-up] 'move-text-up)
+(global-set-key [\C-\S-down] 'move-text-down)
+(global-set-key [\C-\S-\delete] 'remove-current-line)
+;; (global-set-key [\C-\S-\left] 'cut-current-line)
+;; (global-set-key [\C-\S-\right] 'copy-current-line)
+(global-set-key [\C-\S-\left] 'open-line-above)
+(global-set-key [\C-\S-\right] 'open-line-below)
 
 (global-set-key [kp-home]  'beginning-of-buffer) ; [Home]
 (global-set-key [home]     'beginning-of-buffer) ; [Home]
@@ -1421,11 +1537,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'reyas 'yas/reload-all)
 (defalias 'boxcom 'box-heading-comment)
 (defalias 'reccom 'rect-heading-comment)
-(defalias 'init 'open-init-file)
+(defalias 'srecom 'short-rect-heading-comment)
 (defalias 'arv 'auto-revert-mode)
 (defalias 'revb 'revert-buffer)
-(defalias 'sim 'set-input-method)  ;; bound to C-\
 (defalias 'diffb 'diff-buffer-with-file)
+(defalias 'init 'open-init-file)
+(defalias 'sim 'set-input-method)  ;; bound to C-\
 (defalias 'repl 'ielm)
 (defalias 'lim 'lisp-interaction-mode)
 (defalias 'el 'emacs-lisp-mode)
@@ -1434,6 +1551,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'unset 'makunbound)
 (defalias 'unfset 'fmakunbound)
 (defalias 'vll 'visual-line-mode)
+(defalias 'undefun 'fmakunbound)
 
 ;; FINAL
 (setq skeleton-pair nil)

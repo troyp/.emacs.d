@@ -1,5 +1,4 @@
-(require "thingatpt")
-(require "isearch")
+(require 'thingatpt)
 (define-key isearch-mode-map (kbd "C-*")
   (lambda ()
     "Reset current isearch to a word-mode search of the word under point."

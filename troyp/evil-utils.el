@@ -38,6 +38,19 @@
     (print-list-elements evil-jump-list)))
 
 
+;; ************
+;; *          *
+;; * DIGRAPHS *
+;; *          *
+;; ************
+
+(defun evil-enter-digraphs nil
+  (interactive)
+  (with-demoted-errors
+    (evil-insert-digraph 1)
+    (evil-enter-digraphs)))
+
+
 ;; ***********************************
 ;; *                                 *
 ;; * LOWER-CASE PARENS IN LISP MODES *

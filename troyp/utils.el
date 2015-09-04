@@ -106,6 +106,11 @@
      (comment-region (point) (mark))
      (pop-mark)))
 
+(defmacro with-buffer-string (code)
+  "Perform operations on temp buffer and return contents as string"
+  `(with-temp-buffer 
+     ,code
+     (buffer-string)))
 
 
 ;; ===========================================================================
@@ -260,7 +265,7 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 
 (defun make-executable ()
   (interactive)
-  (shell-command (concat "chmod a+x " buffer-file-name)))
+  (shell-command (concat "chmod a+x '" buffer-file-name "'")))
 
 
 ;; ---------------------------------------------------------------------------
