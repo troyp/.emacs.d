@@ -311,6 +311,15 @@
 ;;   M-b: first press removes / so you can edit the directory name (backspace
 ;;        works normally). Thereafter, removes one directory level.
 ;;   M-f: reverses one M-b
+;;   C-z: reverses "merge" (directory shifting)
+(defun bind-ido-keys ()
+  "ido-mode keybindings"
+  (define-key ido-completion-map (kbd "C-n") 'ido-next-match) 
+  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match) 
+  (define-key ido-completion-map (kbd "C-S-t") 'ido-toggle-prefix) 
+  (define-key ido-completion-map (kbd "<f1>") '(lambda () (interactive) (describe-function 'ido-find-file))))
+(add-hook 'ido-setup-hook #'bind-ido-keys)
+
 
 (require 'smex)
 ;; (autoload 'smex "smex" "Smex provides an ido interface to M-x commands.")
@@ -542,6 +551,20 @@
 ;; (add-to-list 'load-path "~/.emacs.d/iedit")
 (require 'iedit)
 
+;; ***************
+;; *             *
+;; * HELP SYSTEM *
+;; *             *
+;; ***************
+(add-to-list 'load-path "~/.emacs.d/drew-adams")
+(require 'help-macro)
+(require 'backquote)
+(require 'naked nil t) ;; (no error if not found): naked-key-description
+(require 'help+)
+(require 'help-fns+)
+(require 'help-mode+)
+;; (global-set-key [f1] 'help-on-click/key)
+
 ;; ------------------
 ;; discover-my-major.
 ;; ------------------
@@ -689,7 +712,7 @@
 
 ;; evil-leader
 (require 'evil-leader)
-(global-evil-leader-mode)
+("global"-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
   "e"  'helm-find-file
@@ -705,6 +728,10 @@
   ">"  'evil-numbers/inc-at-pt
   "<"  'evil-numbers/dec-at-pt
   "."  'find-tag
+  "'" '(lambda (&optional arg) "Keyboard macro."
+	 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
+  "\"" '(lambda (&optional arg) "Keyboard macro."
+	  (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
   )
 
 ;; evil-matchit - installed via package manager
