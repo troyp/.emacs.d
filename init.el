@@ -40,6 +40,7 @@
 ;; (iswitchb-mode 1)
 (setq-default c-basic-offset 4)
 
+(setq default-tab-width 4)
 (setq fill-column 78)
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -248,6 +249,24 @@
 ;; (add-hook 'after-init-hook 'ibus-mode-on)
 ;; (setq ibus-cursor-color '("red" "blue"))
 
+;; -----
+;; mozc.
+;; -----
+(require 'mozc)
+(setq default-input-method "japanese-mozc")
+(setq mozc-candidate-style 'overlay)
+;; TODO:
+;; C-\ toggle-input-method isn't turning off japanese input.
+;; workaround: bind 'mozc-mode to C-\ instead.
+;; This still doesn't work properly in emacs-mode. 
+;; You still have to manually execute M-x mozc-mode to turn off japanese input.
+;; However, it works in evil normal/insert modes.
+(global-set-key (kbd "C-\\") 'mozc-mode)
+;; (global-set-key (kbd "C-\\") 'toggle-input-method)
+;; Defined in evil keybindings section
+;; (define-key evil-normal-state-map (kbd "C-\\") #'mozc-mode)
+;; (define-key evil-insert-state-map (kbd "C-\\") #'mozc-mode)
+
 
 ;; **************************
 ;; *                        *
@@ -317,6 +336,8 @@
   (define-key ido-completion-map (kbd "C-n") 'ido-next-match) 
   (define-key ido-completion-map (kbd "C-p") 'ido-prev-match) 
   (define-key ido-completion-map (kbd "C-S-t") 'ido-toggle-prefix) 
+  (define-key ido-common-completion-map (kbd "C-x <C-return>") 'ido-take-first-match)
+  (define-key ido-completion-map (kbd "C-x <C-return>") 'ido-take-first-match) 
   (define-key ido-completion-map (kbd "<f1>") '(lambda () (interactive) (describe-function 'ido-find-file))))
 (add-hook 'ido-setup-hook #'bind-ido-keys)
 
@@ -490,7 +511,7 @@
 	((windmove-find-other-window 'down)  (buf-move-down))
 	((windmove-find-other-window 'up)    (buf-move-up)))
   (other-window 1))
-(global-set-key (kbd "<C-S-return>")  'win-swap)
+(global-set-key (kbd "<C-return>")  'win-swap)
 
 (defun toggle-frame-split ()
 "  If the frame is split vertically, split it horizontally or vice versa.
@@ -646,6 +667,11 @@
 (define-key evil-insert-state-map (kbd "C-S-k") #'kill-line)
 (define-key evil-insert-state-map (kbd "C-.") 'yas-expand)
 
+;; evil-mode mozc-mode keybindings:
+;; See mozc section above. Workaround. Allows C-\ to toggle japanese input.
+(define-key evil-normal-state-map (kbd "C-\\") #'mozc-mode)
+(define-key evil-insert-state-map (kbd "C-\\") #'mozc-mode)
+
 ;; key bindings for other extensions
 ;; (define-key evil-visual-state-map (kbd "C-S-c C-S-c")
 ;;   (lambda () (interactive) (evil-mode nil) (setq mark-active t) (setq deactivate-mark nil)
@@ -712,7 +738,7 @@
 
 ;; evil-leader
 (require 'evil-leader)
-("global"-evil-leader-mode)
+(global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
   "e"  'helm-find-file
@@ -796,6 +822,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.keynavrc$" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.bash[[:alnum:]-\.]*$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
 
 
 
@@ -1333,6 +1360,16 @@
 
 ;;---------------------------------------------------------------------------
 
+;; *********************
+;; *                   *
+;; * OTHER MAJOR MODES *
+;; *                   *
+;; *********************
+
+(require 'ass-mode)
+
+;; -----------------------------------------------------------------------------
+
 ;; **********************
 ;; *                    *
 ;; * GLOBAL FONT HEIGHT *
@@ -1503,8 +1540,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [\C-\S-\delete] 'remove-current-line)
 ;; (global-set-key [\C-\S-\left] 'cut-current-line)
 ;; (global-set-key [\C-\S-\right] 'copy-current-line)
-(global-set-key [\C-\S-\left] 'open-line-above)
-(global-set-key [\C-\S-\right] 'open-line-below)
+(global-set-key (kbd "<C-S-return>") 'open-line-above)
+(global-set-key (kbd "<S-return>") 'open-line-below)
 
 (global-set-key [kp-home]  'beginning-of-buffer) ; [Home]
 (global-set-key [home]     'beginning-of-buffer) ; [Home]
@@ -1559,8 +1596,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (switch-to-buffer nil))               ; return to the initial buffer
 
 
-;; ALIASES.
-;; --------
+;; *************
+;; *           *
+;; * FUNCTIONS *
+;; *           *
+;; *************
+
+(defun auto-complete-mode-off ()
+  (interactive)
+  (auto-complete-mode 0))
+
+;; defiwrap DEFINITIONS (utils.el)
+(defiwrap fnks '(kill-new buffer-file-name))
+
+;; ***********
+;; *         *
+;; * ALIASES *
+;; *         *
+;; ***********
+
 (defalias 'reyas 'yas/reload-all)
 (defalias 'boxcom 'box-heading-comment)
 (defalias 'reccom 'rect-heading-comment)
@@ -1579,6 +1633,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'unfset 'fmakunbound)
 (defalias 'vll 'visual-line-mode)
 (defalias 'undefun 'fmakunbound)
+(defalias 'acoff 'auto-complete-mode-off)
 
 ;; FINAL
 (setq skeleton-pair nil)

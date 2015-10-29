@@ -1,8 +1,8 @@
-;; ===========================================================================
-;;       ___________________ 
-;;       |                   |
-;;       | UTILITY FUNCTIONS |
-;;       |___________________|
+;; =============================================================================
+;;                                 ___________________ 
+;;                                |                   |
+;;                                | UTILITY FUNCTIONS |
+;;                                |___________________|
 
 
 (fset 'id 'identity)
@@ -113,11 +113,11 @@
      (buffer-string)))
 
 
-;; ===========================================================================
-;;        _____________________________ 
-;;       |                             |
-;;       | LINE-BASED EDITING COMMANDS |
-;;       |_____________________________|
+;; =============================================================================
+;;                            _____________________________ 
+;;                           |                             |
+;;                           | LINE-BASED EDITING COMMANDS |
+;;                           |_____________________________|
 
 
 (defun remove-current-line ()
@@ -236,11 +236,12 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 				       (/= arg 1) t nil))))))
 
 
-;; ===========================================================================
-;;        _______________ 
-;;       |               |
-;;       | FILE & BUFFER |
-;;       |_______________|
+;; =============================================================================
+;;                                   _______________ 
+;;                                  |               |
+;;                                  | FILE & BUFFER |
+;;                                  |_______________|
+
 
 (defun rename-file-and-buffer (name)
   (interactive "snew name: ")
@@ -278,11 +279,12 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   (clipboard-kill-ring-save (point-min) (point-max)))
 
 
-;; ===========================================================================
-;;        __________ 
-;;       |          |
-;;       | COMMENTS |
-;;       |__________|
+;; =============================================================================
+;;                                     __________ 
+;;                                    |          |
+;;                                    | COMMENTS |
+;;                                    |__________|
+
 
 ; functionality replaced by evil-nerd-commenter
 
@@ -312,11 +314,12 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;     (comment-line 0)))
 
 
-;; ===========================================================================
-;;        _____________ 
-;;       |             |
-;;       | KEY BINDING |
-;;       |_____________|
+;; =============================================================================
+;;                                    _____________ 
+;;                                   |             |
+;;                                   | KEY BINDING |
+;;                                   |_____________|
+
 
 (defun define-key-multi-modes (key def keymaps)
   (dolist (keymap keymaps)
@@ -332,11 +335,11 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;; 	 key def)))))
 
 
-;; ===========================================================================
-;;        ________ 
-;;       |        |
-;;       | ALIGN  |
-;;       |________|
+;; =============================================================================
+;;                                       _______ 
+;;                                      |       |
+;;                                      | ALIGN |
+;;                                      |_______|
 
 
 ;; from http://emacswiki.org/emacs/AlignCommands
@@ -347,3 +350,38 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   (interactive "r\nsAlign regexp: ")
   (align-regexp start end
 		(concat "\\(\\s-*\\)" regexp) 1 1 t))
+
+;; =============================================================================
+;;                                       _______ 
+;;                                      |       |
+;;                                      | ELISP |
+;;                                      |_______|
+
+
+(defun kill-eval (sxp)
+  "Evaluate elisp input and store the pretty-printed result in kill ring."
+  (interactive "XELISP>> ")
+  (let ((res (pp-to-string sxp)))
+    (kill-new res)
+    res))
+
+(defun kill-eval-str (sxp)
+  "Evaluate elisp input and store the pretty-printed result in kill ring (strings not quoted)."
+  (interactive "XELISP>> ")
+  (let ((res (if (stringp sxp)
+		 sxp
+	       (pp-to-string sxp))))
+    (kill-new res)
+    res))
+
+(defmacro iwrap (CODE)
+  "Generate interactive wrapper for CODE"
+  `(lambda ()
+     (interactive)
+     (eval ,CODE)))
+
+(defmacro defiwrap (FNAME CODE)
+  "Define function FNAME as interactive wrapper for CODE"
+  `(defun ,FNAME ()
+     (interactive)
+     (eval ,CODE)))
