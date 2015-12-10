@@ -11,6 +11,11 @@
   "(has-value-p SYM): Returns t if SYM is bound and non-null, nil otherwise"
   `(and (boundp ',sym) ,sym t))
 
+(defun add-multiple-to-list (list &rest elts)
+  (dolist (elt elts)
+	(add-to-list list elt))
+  list)
+
 (defun zap-upto-char (arg char)
   (interactive "p\nczap up to char: ")
   (zap-to-char arg char)
@@ -148,6 +153,7 @@
 ;; FIXME: functions work, but when reversed, leave cursor where new line was
 
 (defun open-line-above (n)
+  "Open a new line above the current line, without moving cursor."
   (interactive "p")
   (save-excursion
     (push (point) buffer-undo-list)
@@ -156,6 +162,7 @@
     (newline n)))
 
 (defun open-line-below (n)
+  "Open a new line below the current line, without moving cursor."
   (interactive "p")
   (save-excursion
     (push (point) buffer-undo-list)
@@ -385,3 +392,13 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   `(defun ,FNAME ()
      (interactive)
      (eval ,CODE)))
+
+(defun buffer-font-set (FONTFAMILY)
+  "Set and use temporary face for use in current buffer. Toggle with M-x buffer-face-mode."
+  (interactive "sFont family: ")
+  (let ((prev-buffer-face-mode-face buffer-face-mode-face))
+	(setq buffer-face-mode-face (list :family FONTFAMILY))
+	(buffer-face-mode))
+	(setq buffer-face-mode-face (list :family prev-buffer-face-mode-face)))
+
+

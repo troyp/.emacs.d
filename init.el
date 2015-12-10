@@ -51,6 +51,9 @@
       (if (> (frame-width) 140) 'split-window-horizontally 
 	'split-window-vertically))
 
+(if (boundp 'cua-enable-cua-keys)
+	(setf cua-enable-cua-keys nil))
+
 ;; **********************
 ;; *                    *
 ;; * INITIALIZE PLUGINS *
@@ -123,20 +126,30 @@
 ;; '-----------------'
 
 (setq dark-themes
-      '(zenburn
-	hc-zenburn
-	misterioso
-	sanityinc-tomorrow-night
-	sanityinc-tomorrow-eighties))
+	  '(
+		zenburn
+		hc-zenburn
+		misterioso
+		sanityinc-tomorrow-night
+		sanityinc-tomorrow-eighties
+		))
 (setq light-themes
-      '(adwaita
-	sanityinc-tomorrow-day))
+      '(
+		dichromacy
+		adwaita
+		sanityinc-tomorrow-day
+		))
 (setq mode-line-themes
-      '(smart-mode-line-light
-	smart-mode-line-dark))
+      '(
+		smart-mode-line-light
+		smart-mode-line-dark
+		))
 
 (setq primary-light-theme 'adwaita)
 (setq primary-dark-theme 'hc-zenburn)
+
+(setq troy/white-grey "#F7F7F7")
+(setq troy/dark-grey "#313131")
 
 ;; ---------------------------------------------------------------------------
 ;; ,-----------------,
@@ -150,14 +163,25 @@
 (defun mode-line-theme-p (theme)
   (memq theme mode-line-themes))
 
+(defun cursor-color (col)
+  (interactive (list (read-color "Cursor color: ")))
+  ;; emacs mode color
+  (set-cursor-color col)
+  ;; evil-mode color
+  (setq evil-default-cursor `(t ,col)))
+
 (defun current-theme ()
   (car (--drop-while (mode-line-theme-p it) theme-history)))
 
 (defun toggle-theme ()
   (interactive)
   (if (light-theme-p (current-theme))
-      (theme primary-dark-theme)
-    (theme primary-light-theme)))
+      (progn
+		(load-theme primary-dark-theme)
+		(cursor-color troy/white-grey))
+	(progn
+	  (load-theme primary-light-theme)
+	  (cursor-color troy/dark-grey))))
 (defalias 'tt 'toggle-theme)
 
 (setq theme-history nil)
@@ -268,11 +292,51 @@
 ;; (define-key evil-insert-state-map (kbd "C-\\") #'mozc-mode)
 
 
+;; *********
+;; *       *
+;; * REGEX *
+;; *       *
+;; *********
+
+(setq search-whitespace-regexp nil)  ;; treat spaces normally in interactive regex
+
+;; http://www.emacswiki.org/emacs/rx
+(defmacro rx-extra (&rest body-forms)
+  (let ((add-ins (list
+				  `(file . ,(rx (+ (or alnum digit "." "/" "-" "_"))))
+				  `(ws0 . ,(rx (0+ (any " " "\t"))))
+				  `(ws+ . ,(rx (+ (any " " "\t"))))
+				  `(int . ,(rx (+ digit))))))
+	`(let ((rx-constituents (append ',add-ins rx-constituents nil)))
+	   ,@body-forms)))
+;; ; example 
+;; (let ((string " at Isrc/file-23_2.c line 23 ;: flubber"))
+;;   (if (string-match (rx-extra (rx ws+ "at" ws+ (group file) ws+ "line" ws+ (group int))) string)
+;;       (format "file is %s line is %s"
+;;               (match-string-no-properties 1 string)
+;;               (match-string-no-properties 2 string))))
+
+
 ;; **************************
 ;; *                        *
-;; * SEARCHING & NAVIGATION *
+;; * Searching & NAVIGATION *
 ;; *                        *
 ;; **************************
+
+;; --------
+;; isearch.
+;; --------
+;; http://www.emacswiki.org/emacs/CaseFoldSearch
+(add-hook
+ 'isearch-mode-hook
+ (function
+  (lambda ()
+	(define-key isearch-mode-map "\C-h" 'isearch-mode-help)
+	(define-key isearch-mode-map "\C-t" 'isearch-toggle-regexp)
+	(define-key isearch-mode-map "\C-c" 'isearch-toggle-case-fold)
+	(define-key isearch-mode-map "\C-j" 'isearch-edit-string))))
+;; add indicator for case-fold-search in modeline
+(add-to-list 'minor-mode-alist '(case-fold-search " CFS"))
 
 ;; -----------------
 ;; highlight-symbol.
@@ -442,6 +506,15 @@
 (google-this-mode 1)
 
 
+;; **********
+;; *        *
+;; * Doremi *
+;; *        *
+;; **********
+(setq doremi-up-keys '(up ?\C-p ?k))
+(setq doremi-down-keys '(down ?\C-n ?j))
+
+
 ;; *********
 ;; *       *
 ;; * Dired *
@@ -511,7 +584,7 @@
 	((windmove-find-other-window 'down)  (buf-move-down))
 	((windmove-find-other-window 'up)    (buf-move-up)))
   (other-window 1))
-(global-set-key (kbd "<C-return>")  'win-swap)
+(global-set-key (kbd "<S-return>")  'win-swap)
 
 (defun toggle-frame-split ()
 "  If the frame is split vertically, split it horizontally or vice versa.
@@ -632,10 +705,18 @@
 
 ;; Modes starting in Emacs state:
 (loop for mode in
-      '(comint-mode  ;; not working for comint-mode?
-	shell-mode
-	dired-mode)
-      do (add-to-list 'evil-emacs-state-modes mode))
+      '(
+		comint-mode  ;; not working for comint-mode?
+		term-mode
+		shell-mode
+		dired-mode
+		)
+	  do (add-to-list 'evil-emacs-state-modes mode))
+
+;; ----------- 
+;; KEYBINDINGS 
+;; ----------- 
+;; (evil-define-key 'STATE KEYMAP    ;; define key for STATE in KEYMAP
 
 ;; remove C-w C-h binding (steals C-h from help system)
 (define-key evil-window-map "\C-h" nil)
@@ -646,8 +727,8 @@
 (define-key evil-normal-state-map (kbd "C-S-d") #'evil-scroll-up)
 (define-key evil-normal-state-map (kbd "C-S-o") #'evil-jump-forward)
 (define-key evil-normal-state-map (kbd "C-e") #'end-of-line)
-(define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
-(define-key evil-normal-state-map (kbd "C-;") #'evil-repeat-find-char-reverse)
+;; (define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
+;; (define-key evil-normal-state-map (kbd "C-;") #'evil-repeat-find-char-reverse)
 (define-key evil-normal-state-map (kbd "[ SPC") #'insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") #'insert-line-below)
 (define-key evil-normal-state-map (kbd "[ b") #'switch-to-prev-buffer)
@@ -666,6 +747,8 @@
 (define-key evil-insert-state-map (kbd "C-k") #'evil-insert-digraph)
 (define-key evil-insert-state-map (kbd "C-S-k") #'kill-line)
 (define-key evil-insert-state-map (kbd "C-.") 'yas-expand)
+(define-key evil-insert-state-map (kbd "C-n") #'next-line)
+(define-key evil-insert-state-map (kbd "C-p") #'previous-line)
 
 ;; evil-mode mozc-mode keybindings:
 ;; See mozc section above. Workaround. Allows C-\ to toggle japanese input.
@@ -725,9 +808,9 @@
 (require 'evil-jumper)
 
 ;; evil-nerd-commenter
-(setq evilnc-hotkey-comment-operator ",,")
+;; (setq evilnc-hotkey-comment-operator ",,")
 (require 'evil-nerd-commenter)
-(evilnc-default-hotkeys)
+;; (evilnc-default-hotkeys)
 
 ;; evil-numbers
 (require 'evil-numbers)
@@ -743,6 +826,7 @@
 (evil-leader/set-key
   "e"  'helm-find-file
   "s"  'load-init-file
+  "<SPC>"  [?\C-x ?b return]  ;; switch to last used buffer
   "b"  'switch-to-buffer
   "k"  'kill-buffer
   "i"  'open-init-file
@@ -751,6 +835,9 @@
   "a"  'ace-jump-word-mode
   "f"  'ace-jump-char-mode
   "g"  'ace-jump-line-mode
+  "h"  'extra-help-map
+  "9"  'kmacro-start-macro-or-insert-counter
+  "0"  'kmacro-end-or-call-macro
   ">"  'evil-numbers/inc-at-pt
   "<"  'evil-numbers/dec-at-pt
   "."  'find-tag
@@ -975,6 +1062,14 @@
 (add-hook 'haskell-mode-hook 'haskell-indent-mode)
 (add-hook 'haskell-mode-hook 'haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'inf-haskell-mode)
+(define-key haskell-mode-map (kbd "C-c .") 'hoogle-lookup)
+(defun hoogle-lookup (s)
+  (interactive "sHoogle: ")
+  (message
+   (shell-command-to-string
+	(concat "/home/troy/.cabal/bin/hoogle " s))))
+
+
 
 ;; ;; Scion.
 ;; ;; ======
@@ -1019,7 +1114,8 @@
 (add-hook 'js-mode-hook
 	  '(lambda ()
 	     (js2-minor-mode)
-	     (define-key js2-mode-map (kbd "C-c C-u") 'js2-cancel-error-face)))
+	     (define-key js2-mode-map (kbd "C-c C-u") 'js2-cancel-error-face)
+		 (setq indent-tabs-mode nil)))
 (add-hook 'js2-minor-mode-hook 'ac-js2-mode)
 
 ;; default js mode: js2-mode
@@ -1500,13 +1596,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Insert Continuation Symbol.
 ;; TODO: redefine column number
-(defun insert-continuation ()
+(defun insert-line-continuation ()
   "insert \ at column 80"
   (interactive)
   (end-of-line)
   (insert-char 32 (- 79 (current-column)))
   (insert-char '?\\' 1))
-(define-key-multi-modes "\C-x\\" 'insert-continuation
+(define-key-multi-modes "\C-x\\" 'insert-line-continuation
   '(python-mode-map))
 
 (add-hook
@@ -1520,6 +1616,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; * KEY BINDINGS *
 ;; *              *
 ;; ****************
+
+(define-prefix-command 'menu-key-map)
+(global-set-key (kbd "<menu>") 'menu-key-map)
 
 (defun get-face (&optional pos)
   (interactive)
@@ -1540,8 +1639,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [\C-\S-\delete] 'remove-current-line)
 ;; (global-set-key [\C-\S-\left] 'cut-current-line)
 ;; (global-set-key [\C-\S-\right] 'copy-current-line)
+(global-set-key (kbd "<C-return>") 'open-line-below)
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
-(global-set-key (kbd "<S-return>") 'open-line-below)
 
 (global-set-key [kp-home]  'beginning-of-buffer) ; [Home]
 (global-set-key [home]     'beginning-of-buffer) ; [Home]
@@ -1575,6 +1674,42 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-S-p")
 		(lambda () (interactive) (scroll-other-window-down -1)))
 
+;; KEYBOARD MACROS.
+;; 
+(fset 'switch-to-most-recent-buffer [?\C-x ?b return])
+
+;; ***********
+;; *         *
+;; * KEYMAPS *
+;; *         *
+;; ***********
+
+(defun extra-help-apropos-all-variables (s)
+  (interactive "sVariable: ")
+  (apropos-variable s t))
+(defun extra-help-apropos-user-variables (s)
+  (interactive "sVariable: ")
+  (apropos-variable s))
+
+(define-prefix-command 'extra-help-map)
+
+(define-key 'extra-help-map "va" 'extra-help-apropos-all-variables)
+(define-key 'extra-help-map "vu" 'extra-help-apropos-user-variables)
+
+
+
+;; *************
+;; *           *
+;; * FUNCTIONS *
+;; *           *
+;; *************
+
+(defun auto-complete-mode-off ()
+  (interactive)
+  (auto-complete-mode 0))
+
+;; defiwrap DEFINITIONS (utils.el)
+(defiwrap fnks '(kill-new buffer-file-name))
 
 ;; KEYBOARD MACROS.
 (let ((kmacro-init (concat user-init-file "-kmacros")))
@@ -1594,20 +1729,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (insert-kbd-macro name)               ; copy the macro
   (newline)                             ; insert a newline
   (switch-to-buffer nil))               ; return to the initial buffer
-
-
-;; *************
-;; *           *
-;; * FUNCTIONS *
-;; *           *
-;; *************
-
-(defun auto-complete-mode-off ()
-  (interactive)
-  (auto-complete-mode 0))
-
-;; defiwrap DEFINITIONS (utils.el)
-(defiwrap fnks '(kill-new buffer-file-name))
 
 ;; ***********
 ;; *         *

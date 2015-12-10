@@ -13,16 +13,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun evil-forward-char-or-extend ()
-  ;; FIXME
-   (interactive)
-   (if (eq (point) (- (line-end-position) 1))
-       (progn
-	(replace-string "\n" " \n" nil (point) (+ (line-end-position) 1))
-	;; (backward-char))
-	(evil-visual-restore))
-     (evil-forward-char)))
+;; ***************
+;; *             *
+;; * VISUAL MODE *
+;; *             *
+;; ***************
 
+(defun line-end-after-pos (pos)
+  (save-excursion
+	(goto-char pos)
+	(line-end-position)))
+
+(defun move-right ()
+  "Hack to move right in visual mode without cancelling it.
+   Needed for evil-forward-char-or-extend, since I couldn't
+   work out a better way that worked."
+  (kmacro-exec-ring-item (quote ([right] 0 "%d")) 1))
+
+(defun evil-forward-char-or-extend ()
+   (interactive)
+   (letrec ((pos (marker-position evil-visual-point))
+			(line-end (line-end-after-pos pos)))
+	   (if (eq pos line-end)
+		   (progn
+			 (save-excursion
+			   (replace-regexp "$" " " nil pos (+ pos 1)))
+			 (evil-visual-restore))
+		 (progn
+		   (move-right)))))
 
 ;; *************
 ;; *           *
