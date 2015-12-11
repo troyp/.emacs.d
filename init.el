@@ -811,6 +811,8 @@
 ;; (setq evilnc-hotkey-comment-operator ",,")
 (require 'evil-nerd-commenter)
 ;; (evilnc-default-hotkeys)
+(global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+(global-set-key (kbd "C-M-;") 'comment-dwim)
 
 ;; evil-numbers
 (require 'evil-numbers)
