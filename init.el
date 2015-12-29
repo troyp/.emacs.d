@@ -990,7 +990,10 @@
 (load "troyp/c++-utils.el")
 
 ;; make _ part of words
-(modify-syntax-entry ?_ "w" c-mode-syntax-table)
+(defun c-mode-include-underscore-in-words ()
+  (interactive)
+  (modify-syntax-entry ?_ "w" c-mode-syntax-table))
+(add-hook 'c-mode-common-hook 'c-mode-include-underscore-in-words)
 
 
 ;; EMACS-CLANG-COMPLETE-ASYNC
