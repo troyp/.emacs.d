@@ -1205,10 +1205,11 @@
 (setq prolog-system 'swi)
 (setq auto-mode-alist
       (append
-       '(("\\.pl$" . prolog-mode)
-	 ("\\.m$" . mercury-mode)
-	 ("\\.prolog$" . prolog-mode)
-	 ("\\.pro$" . prolog-mode))
+       '(
+		 ;; ("\\.pl$" . prolog-mode)
+		 ("\\.m$" . mercury-mode)
+		 ("\\.prolog$" . prolog-mode)
+		 ("\\.pro$" . prolog-mode))
        auto-mode-alist))
 
 
