@@ -36,6 +36,7 @@
 (setq hscroll-margin 5)
 (setq hscroll-step 1)
 
+(setq-default indent-tabs-mode nil)
 (icomplete-mode 99)
 ;; (iswitchb-mode 1)
 (setq-default c-basic-offset 4)
@@ -60,7 +61,7 @@
 ;; *                    *
 ;; **********************
 
-(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/dash.el")
 
@@ -135,6 +136,7 @@
 		))
 (setq light-themes
       '(
+		sanityinc-solarized-light
 		dichromacy
 		adwaita
 		sanityinc-tomorrow-day
@@ -527,7 +529,10 @@
 (require 'dired-efap)
 (define-key dired-mode-map [f2] 'dired-efap)
 (define-key dired-mode-map [down-mouse-1] 'dired-efap-click)
-(setq-default dired-listing-switches "-lXGh --group-directories-first")
+(setq-default dired-listing-switches "-lGh --group-directories-first")
+(defun dired-separate-extensions ()
+  (interactive)
+  (setq-default dired-listing-switches (concat "-X " dired-listing-switches)))
 (setq dired-alt-listing-switches "-alhv")
 
 
@@ -565,6 +570,10 @@
 (global-set-key (kbd "<M-S-down>")   'buf-move-down)
 (global-set-key (kbd "<M-S-left>")   'buf-move-left)
 (global-set-key (kbd "<M-S-right>")  'buf-move-right)
+(global-set-key (kbd "M-J")  'buf-move-down)  
+(global-set-key (kbd "M-K")  'buf-move-up)
+(global-set-key (kbd "M-H")  'buf-move-left)
+(global-set-key (kbd "M-L")  'buf-move-right)
 
 ;; ---------------
 ;; transpose-frame
@@ -599,6 +608,7 @@
       (split-window-vertically)) ; gives us a split with the other window twice
     (switch-to-buffer nil))) ; restore the original window in this part of the frame
 (global-set-key "\C-x55" 'toggle-frame-split)
+(global-set-key "\C-x\\" 'toggle-frame-split)
 
 
 ;; ********************
@@ -613,7 +623,6 @@
 ;; ;; disable for now - use evil-normal-mode C-v instead
 ;; (setq cua-enable-cua-keys nil) ;; only for rectangles
 ;; (cua-mode t)
-;; (global-set-key (kbd "<C-return>")  #'cua-set-rectangle-mark)
 
 ;; ---------
 ;; elscreen.
@@ -687,6 +696,8 @@
 ;; *           *
 ;; *************
 
+(add-to-list 'load-path "~/.emacs.d/evil-plugins")
+
 (global-set-key [f9] 'evil-mode)
 
 (add-to-list 'load-path "~/.emacs.d/evil")
@@ -703,13 +714,25 @@
 
 (defalias 'evl 'evil-local-mode)
 
+;; -----------------------
+;; KEYBINDING INTERACTIONS
+;; -----------------------
+
+(add-to-list 'evil-overriding-maps '(yas-minor-mode-map . insert))
+(add-to-list 'evil-overriding-maps '(help-mode-map . normal))
+
+(add-hook 'help-mode-hook 
+		  '(lambda () 
+			 (define-key evil-motion-state-map (kbd "TAB") #'forward-button)))
+;; FIXME: turn off when out of help buffer.
+
 ;; Modes starting in Emacs state:
 (loop for mode in
       '(
 		comint-mode  ;; not working for comint-mode?
 		term-mode
 		shell-mode
-		dired-mode
+		;; dired-mode
 		)
 	  do (add-to-list 'evil-emacs-state-modes mode))
 
@@ -721,21 +744,25 @@
 ;; remove C-w C-h binding (steals C-h from help system)
 (define-key evil-window-map "\C-h" nil)
 
-(add-to-list 'evil-overriding-maps '(yas-minor-mode-map . insert))
 ;; normal-state
+(defun insert-space () (interactive) (insert ? ))
+(define-key evil-normal-state-map (kbd "S-SPC") #'insert-space)
 (define-key evil-normal-state-map (kbd "TAB") #'indent-for-tab-command)
 (define-key evil-normal-state-map (kbd "C-S-d") #'evil-scroll-up)
 (define-key evil-normal-state-map (kbd "C-S-o") #'evil-jump-forward)
 (define-key evil-normal-state-map (kbd "C-e") #'end-of-line)
 ;; (define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
 ;; (define-key evil-normal-state-map (kbd "C-;") #'evil-repeat-find-char-reverse)
-(define-key evil-normal-state-map (kbd "[ SPC") #'insert-line-above)
-(define-key evil-normal-state-map (kbd "] SPC") #'insert-line-below)
+(define-key evil-normal-state-map (kbd "[ SPC") #'open-line-above)
+(define-key evil-normal-state-map (kbd "] SPC") #'open-line-below)
 (define-key evil-normal-state-map (kbd "[ b") #'switch-to-prev-buffer)
 (define-key evil-normal-state-map (kbd "] b") #'switch-to-next-buffer)
 (define-key evil-normal-state-map (kbd "C-y") nil)
 (define-key evil-normal-state-map (kbd "gu") #'evil-upcase)
 (define-key evil-normal-state-map (kbd "gU") #'evil-downcase)
+;; visual state
+(defun insert-space-visual () (interactive) (execute-kbd-macro " ") (evil-visual-restore))
+(define-key evil-visual-state-map (kbd "S-SPC") #'insert-space-visual)
 ;; motion state
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
 ;; insert state
@@ -795,9 +822,44 @@
 	))
 (defalias 'digra 'evil-enter-digraphs)  ;; evil-utils
 
-;; plugins...
-(add-to-list 'load-path "~/.emacs.d/evil-plugins")
+;; evil-leader
+(require 'evil-leader)
+(global-evil-leader-mode)
+(evil-leader/set-leader "<SPC>")
+(evil-leader/set-key
+  "e"  'helm-find-file
+  "s"  'load-init-file
+  "<SPC>"  [?\C-x ?b return]  ;; switch to last used buffer
+  "b"  'switch-to-buffer
+  "ci" 'evilnc-comment-or-uncomment-lines
+  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "cc" 'evilnc-copy-and-comment-lines
+  "cp" 'evilnc-comment-or-uncomment-paragraphs
+  "cr" 'comment-or-uncomment-region
+  "cv" 'evilnc-toggle-invert-comment-line-by-line
+  "k"  'kill-buffer
+  "i"  'open-init-file
+  "v"  'eval-region
+  "V"  'eval-buffer
+  "a"  'ace-jump-word-mode
+  "f"  'ace-jump-char-mode
+  "g"  'ace-jump-line-mode
+  "h"  'extra-help-map
+  "l"  'helm-mini
+  "9"  'kmacro-start-macro-or-insert-counter
+  "0"  'kmacro-end-or-call-macro
+  ">"  'evil-numbers/inc-at-pt
+  "<"  'evil-numbers/dec-at-pt
+  "."  'find-tag
+  "'" '(lambda (&optional arg) "Keyboard macro."
+	 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
+  "\"" '(lambda (&optional arg) "Keyboard macro."
+	  (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
+  )
 
+;; -------
+;; PLUGINS
+;; -------
 
 ;; evil-exchange (vim-exchange)
 (require 'evil-exchange)
@@ -809,7 +871,6 @@
 
 ;; evil-nerd-commenter
 ;; (setq evilnc-hotkey-comment-operator ",,")
-(require 'evil-nerd-commenter)
 ;; (evilnc-default-hotkeys)
 (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
 (global-set-key (kbd "C-M-;") 'comment-dwim)
@@ -820,34 +881,6 @@
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
-
-;; evil-leader
-(require 'evil-leader)
-(global-evil-leader-mode)
-(evil-leader/set-leader "<SPC>")
-(evil-leader/set-key
-  "e"  'helm-find-file
-  "s"  'load-init-file
-  "<SPC>"  [?\C-x ?b return]  ;; switch to last used buffer
-  "b"  'switch-to-buffer
-  "k"  'kill-buffer
-  "i"  'open-init-file
-  "v"  'eval-region
-  "V"  'eval-buffer
-  "a"  'ace-jump-word-mode
-  "f"  'ace-jump-char-mode
-  "g"  'ace-jump-line-mode
-  "h"  'extra-help-map
-  "9"  'kmacro-start-macro-or-insert-counter
-  "0"  'kmacro-end-or-call-macro
-  ">"  'evil-numbers/inc-at-pt
-  "<"  'evil-numbers/dec-at-pt
-  "."  'find-tag
-  "'" '(lambda (&optional arg) "Keyboard macro."
-	 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
-  "\"" '(lambda (&optional arg) "Keyboard macro."
-	  (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
-  )
 
 ;; evil-matchit - installed via package manager
 (require 'evil-matchit)
@@ -1016,6 +1049,26 @@
 
 ;; (my-ac-config)
 
+(defun comment-use-line-comments ()
+  (interactive)
+  (setq-local comment-start "//")
+  (setq-local comment-end "")
+  (setq-local comment-type "line")
+  (message "Using line comments"))
+
+(defun comment-use-block-comments ()
+  (interactive)
+  (setq-local comment-start "/*")
+  (setq-local comment-end "*/")
+  (setq-local comment-type "block")
+  (message "Using block comments"))
+
+(defun comment-toggle-line-block ()
+  (interactive)
+  (if (and (boundp 'comment-type)
+           (string= comment-type "line"))
+      (comment-use-block-comments)
+    (comment-use-line-comments)))
 
 ;; *******
 ;; *     *
@@ -1194,6 +1247,20 @@
 (define-key oz-mode-map (kbd "M-p") 'evil-scroll-line-up)
 (define-key oz-mode-map (kbd "M-n") 'evil-scroll-line-down)
 
+
+;; ********
+;; *      *
+;; * Perl *
+;; *      *
+;; ********
+
+(add-to-list 'load-path "/home/troy/.emacs.d/Emacs-PDE-0.2.16/lisp/")
+(load "pde-load")
+(global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+(defun perl-completion-on ()
+  (require 'perl-completion)
+  (perl-completion-mode t))
+(add-hook 'cperl-mode-hook 'perl-completion-on)
 
 
 ;; **********
@@ -1570,10 +1637,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; LOAD AUXILLARY FILES.
 
 (setq aux-elisp-files
-      '("~/.emacs.d/troyp/utils.el"
-	"~/.emacs.d/troyp/headings.el"
-	"~/.emacs.d/smooth-scrolling.el"
-	"~/.emacs.d/move-text.el"))
+      '("~/.emacs.d/lisp/troyp/utils.el"
+		"~/.emacs.d/lisp/troyp/headings.el"
+		"~/.emacs.d/lisp/smooth-scrolling.el"
+		"~/.emacs.d/lisp/move-text.el"
+		"~/.emacs.d/lisp/search-bindings.el"
+		))
 (loop for f in aux-elisp-files do
       (if (file-exists-p f) (load f)))
 
@@ -1595,6 +1664,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defun insert-backquote ()
   (interactive)
   (insert-char ?`))
+
 (define-key-multi-modes (kbd "C-'") 'insert-backquote
   '(shell-mode-map
     haskell-mode-map
@@ -1625,6 +1695,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (define-prefix-command 'menu-key-map)
 (global-set-key (kbd "<menu>") 'menu-key-map)
+(global-set-key (kbd "<menu>1") 'linum-mode)
 
 (defun get-face (&optional pos)
   (interactive)
@@ -1765,3 +1836,4 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; FINAL
 (setq skeleton-pair nil)
 (put 'upcase-region 'disabled nil)
+(cua-mode 0)

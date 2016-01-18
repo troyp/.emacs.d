@@ -30,6 +30,7 @@
    work out a better way that worked."
   (kmacro-exec-ring-item (quote ([right] 0 "%d")) 1))
 
+;; FIXME:
 (defun evil-forward-char-or-extend ()
    (interactive)
    (letrec ((pos (marker-position evil-visual-point))
@@ -41,6 +42,15 @@
 			 (evil-visual-restore))
 		 (progn
 		   (move-right)))))
+(defun evil-forward-char-or-extend () 
+   (interactive) 
+   (let ((pt (point)))
+     (move-right)
+     (if (eq pt (point))
+         (insert-space-visual))))
+
+    
+(global-set-key [s-right]  'evil-forward-char-or-extend)   
 
 ;; *************
 ;; *           *

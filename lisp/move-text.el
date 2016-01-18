@@ -31,8 +31,17 @@
   (interactive "*p")
   (move-text-internal arg))
 
-(defun move-text-up (arg)
+(defun move-text-up (arg)    ; for Emacs 24.4
   "Move region (transient-mark-mode active) or current line
   arg lines up."
   (interactive "*p")
-  (move-text-internal (- arg)))
+  (let ((col (current-column)))
+    (move-text-internal (- arg))
+    (previous-line)
+    (move-to-column col)))
+
+;; (defun move-text-up (arg)    ; for Emacs 24.3
+;;   "Move region (transient-mark-mode active) or current line
+;;   arg lines up."
+;;   (interactive "*p")
+;;   (move-text-internal (- arg)))
