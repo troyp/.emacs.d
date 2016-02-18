@@ -275,6 +275,14 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   (interactive)
   (shell-command (concat "chmod a+x '" buffer-file-name "'")))
 
+(defun add-subdirs-to-load-path (basedir)
+  (add-to-list 'load-path basedir)
+  (dolist (subdir-name (directory-files basedir))
+    (let ((subdir (concat basedir "/" subdir-name)))
+      (when (and (file-directory-p subdir)
+                 (not (string-prefix-p "." subdir-name)))
+        (add-to-list 'load-path subdir)))))
+
 
 ;; ---------------------------------------------------------------------------
 ;; ,--------------------------,
@@ -333,13 +341,15 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
     (define-key (symbol-value keymap) key def)))
 
 ;; FIXME: mode-hook verson
-;; (defun define-key-multi-modes (key def modes)
-;;   (dolist (mode modes)
-;;     (add-hook
-;;      (concat-symbols mode '-hook)
-;;      (lambda nil
-;;        (define-key (concat-symbols mode '-map)
-;; 	 key def)))))
+(defun define-key-multi-modes (key def modes)
+  (dolist (mode modes)
+    (let ((hook-name (concat-symbols mode '-hook))
+          (map-name  (concat-symbols mode '-map)))
+      (if (boundp map-name)
+          (define-key (symbol-value map-name) key def)
+        (add-hook hook-name
+                  (lambda () (define-key map-name key def)))))))
+      
 
 
 ;; =============================================================================
@@ -348,15 +358,42 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;                                      | ALIGN |
 ;;                                      |_______|
 
+(defun pcre-align (BEG END s &optional group spacing repeat)
+  "Align region using a PCRE. Requires pcre2el."
+  (interactive "r\nsPCRE (group around part to extend): ")
+  (unless BEG (setq BEG (region-beginning)))
+  (unless BEG (setq BEG (region-end)))
+  (unless group (setq group 1))
+  (unless spacing (setq spacing align-default-spacing))
+  (align-regexp BEG END (pcre-to-elisp s) group spacing repeat))
 
-;; from http://emacswiki.org/emacs/AlignCommands
-;; GPL2
-(defun align-repeat (start end regexp)
-  "Repeat alignment with respect to
-     the given regular expression."
-  (interactive "r\nsAlign regexp: ")
-  (align-regexp start end
-		(concat "\\(\\s-*\\)" regexp) 1 1 t))
+(defun quick-pcre-align (BEG END s &optional spacing repeat)
+  "Align region using a PCRE. PCRE doesn't require the group for expansion. Requires pcre2el."
+  (interactive "r\nsPCRE to align on: ")
+  (unless BEG (setq BEG (region-beginning)))
+  (unless BEG (setq BEG (region-end)))
+  (unless spacing (setq spacing align-default-spacing))
+  (let ((regexp (concat "(\s*)" s)))
+    (align-regexp BEG END (pcre-to-elisp regexp) 1 spacing repeat)))
+
+(defun quick-align (BEG END s &optional spacing repeat)
+  "Align region using a regexp. The regexp doesn't require the group for expansion."
+  (interactive "r\nsRegexp to align on: ")
+  (unless BEG (setq BEG (region-beginning)))
+  (unless BEG (setq BEG (region-end)))
+  (unless spacing (setq spacing align-default-spacing))
+  (let ((regexp (concat "\\(\\s-*\\)" s)))
+    (align-regexp BEG END regexp 1 spacing repeat)))
+
+(defun quick-pcre-align-repeat (BEG END s &optional spacing)
+  "Align region using repeated matches of a PCRE. Requires pcre2el."
+  (interactive "r\nsPCRE to align on: ")
+  (unless BEG (setq BEG (region-beginning)))
+  (unless BEG (setq BEG (region-end)))
+  (unless spacing (setq spacing align-default-spacing))
+  (let ((regexp (concat "(\s*)" s)))
+    (align-regexp BEG END (pcre-to-elisp regexp) 1 spacing t)))
+
 
 ;; =============================================================================
 ;;                                       _______ 
@@ -393,6 +430,13 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
      (interactive)
      (eval ,CODE)))
 
+
+;; =============================================================================
+;;                                       _______ 
+;;                                      |       |
+;;                                      | OTHER |
+;;                                      |_______|
+
 (defun buffer-font-set (FONTFAMILY)
   "Set and use temporary face for use in current buffer. Toggle with M-x buffer-face-mode."
   (interactive "sFont family: ")
@@ -401,4 +445,24 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 	(buffer-face-mode))
 	(setq buffer-face-mode-face (list :family prev-buffer-face-mode-face)))
 
-
+;; modified from Emacs source: GPL3 
+(defun shell-command-replace-region
+    (START END COMMAND &optional OUTPUT-BUFFER REPLACE ERROR-BUFFER DISPLAY-ERROR-BUFFER)
+  "A version of shell-command-on-region which automatically operates on the current buffer"
+  (interactive (let (string)
+		 (unless (mark)
+		   (error "The mark is not set now, so there is no region"))
+		 ;; Do this before calling region-beginning
+		 ;; and region-end, in case subprocess output
+		 ;; relocates them while we are in the minibuffer.
+		 (setq string (read-shell-command "Shell command on region: "))
+		 ;; call-interactively recognizes region-beginning and
+		 ;; region-end specially, leaving them in the history.
+		 (list (region-beginning) (region-end)
+		       string
+               t
+               t
+		       shell-command-default-error-buffer
+		       t)))
+  (shell-command-on-region START END COMMAND OUTPUT-BUFFER REPLACE
+                           ERROR-BUFFER DISPLAY-ERROR-BUFFER))

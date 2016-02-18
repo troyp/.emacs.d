@@ -158,6 +158,69 @@
 (fset 'rect-heading-comment (make-heading-comment 'rect-heading))
 (fset 'short-rect-heading-comment (make-heading-comment 'short-rect-heading))
 
+;; -----------------------------------------------------------------------------
+;; ,--------------------,
+;; | Underline Commands |
+;; '--------------------'
+
+(defun underline (&optional char length-adjustment start-new-line)
+  "Underlines the non-whitespace portion of the current line.
+   CHAR (default ?-) is the character used in the underline.
+   LENGTH-ADJUSTMENT is the amount (possibly negative) to be added to the underline length.
+   START-NEW-LINE, if true, opens a new line after the underline and leaves the cursor on it."
+  (interactive)
+  (unless char (setf char ?-))
+  (unless length-adjustment (setf length-adjustment 0))
+  (let* ((beg (line-beginning-position))
+         (end (line-end-position))
+         (content-end (progn
+                        (goto-char end)
+                        (skip-syntax-backward " " beg)
+                        (point)))
+         (indent (current-indentation))
+         (length (+ (- content-end beg)
+                    length-adjustment))
+         (end-of-underline-pos nil))
+    (save-excursion
+      (end-of-line)
+      (newline)
+      (indent-to indent)
+      (insert-char char length)
+      (setf end-of-underline-pos (point)))
+    (when start-new-line
+      (goto-char end-of-underline-pos)
+      (newline))))
+
+(defun underline-and-open-line-below (&optional char length-adjustment)
+  (interactive)
+  (underline char length-adjustment t))
+
+(defun underline-comment (&optional char length-adjustment start-new-line)
+  (interactive)
+  (unless length-adjustment (setf length-adjustment 0))
+  (let* ((comment-char-len  (if (and (string-empty-p comment-end)
+                                     (= (length comment-start) 1))
+                                2
+                              (+ (length comment-start)
+                                 (length comment-end))))
+         ;; adjustment: if no comment-end string and comment-start is a single char,
+         ;;             comment functions use two comment-start characters.
+         (comment-str-len         (+ comment-char-len
+                                     (length comment-padding)))
+         (length-adjustment    (- length-adjustment comment-str-len))
+         (end-of-comment-pos   nil))
+    (save-excursion
+      (underline char length-adjustment nil)
+      (next-line)
+      (comment-region-lines (line-beginning-position) (line-end-position))
+      (setf end-of-comment-pos (line-end-position)))
+    (when start-new-line
+      (goto-char end-of-comment-pos)
+      (newline))))
+    
+    
+
+               
 
 ;; ===========================================================================
 ;;        ____________________________ 

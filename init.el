@@ -61,11 +61,15 @@
 ;; *                    *
 ;; **********************
 
+(eval-when-compile (require 'subr-x))
+
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/dash.el")
 
 (require 'dash)
+(require 'dash-functional)
+(eval-after-load "dash" '(dash-enable-font-lock))
 
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
@@ -91,6 +95,9 @@
 
 (el-get 'sync)
 
+;; undo-hist
+(require 'undohist)
+(undohist-initialize)
 
 ;; *************
 ;; *           *
@@ -114,6 +121,31 @@
 
 ;; to byte (re)compile .emacs.d:
 ;;   (byte-recompile-directory "/home/troy/.emacs.d" 0 t)
+
+
+;; ************************
+;; *                      *
+;; * PERSONAL ELISP FILES *
+;; *                      *
+;; ************************
+
+;; non-package elisp:
+
+(setq aux-elisp-files
+      '("~/.emacs.d/lisp/troyp/utils.el"
+		"~/.emacs.d/lisp/troyp/headings.el"
+		"~/.emacs.d/lisp/smooth-scrolling.el"
+		"~/.emacs.d/lisp/move-text.el"
+		"~/.emacs.d/lisp/search-bindings.el"
+		))
+(loop for f in aux-elisp-files do
+      (if (file-exists-p f) (load f)))
+
+;; packages:
+
+(add-to-list 'load-path "~/.emacs.d/lisp/troyp")
+(require 'mode-ring)
+
 
 ;; ===========================================================================
 ;; ****************
@@ -696,11 +728,14 @@
 ;; *           *
 ;; *************
 
-(add-to-list 'load-path "~/.emacs.d/evil-plugins")
+(defun evil-plugins-refresh-dirs ()
+  (interactive)
+  (add-subdirs-to-load-path "~/.emacs.d/evil-plugins"))
+(evil-plugins-refresh-dirs)
 
 (global-set-key [f9] 'evil-mode)
 
-(add-to-list 'load-path "~/.emacs.d/evil")
+;; (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
 (evil-mode 1)
 
@@ -739,6 +774,7 @@
 ;; ----------- 
 ;; KEYBINDINGS 
 ;; ----------- 
+(load "troyp/evil-utils.el")
 ;; (evil-define-key 'STATE KEYMAP    ;; define key for STATE in KEYMAP
 
 ;; remove C-w C-h binding (steals C-h from help system)
@@ -760,9 +796,14 @@
 (define-key evil-normal-state-map (kbd "C-y") nil)
 (define-key evil-normal-state-map (kbd "gu") #'evil-upcase)
 (define-key evil-normal-state-map (kbd "gU") #'evil-downcase)
+
 ;; visual state
 (defun insert-space-visual () (interactive) (execute-kbd-macro " ") (evil-visual-restore))
 (define-key evil-visual-state-map (kbd "S-SPC") #'insert-space-visual)
+;; (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
+(define-key evil-visual-state-map (kbd "C-SPC") #'evil-forward-char-or-extend)
+(define-key evil-visual-state-map (kbd "C-\\") #'shell-command-replace-region)
+
 ;; motion state
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
 ;; insert state
@@ -797,9 +838,6 @@
 (define-key package-menu-mode-map (kbd "S-<f3>") #'evil-search-backward)
 
 
-(load "troyp/evil-utils.el")
-(define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
-
 ;; ESC quits everything:
 (define-key evil-normal-state-map           [escape] 'keyboard-quit)
 (define-key evil-visual-state-map           [escape] 'keyboard-quit)
@@ -812,14 +850,12 @@
 (evil-add-command-properties 'move-beginning-of-line-or-text :repeat 'ignore)
 
 ;; digraphs
-(setq evil-digraphs-table
-      (delq (assoc '(?. ?.) evil-digraphs-table)
-	    evil-digraphs-table))
 (setq evil-digraphs-table-user
       '(
-	((?. ?.) . ?\x2026)
-	((?, ?:) . ?\x2025)
-	))
+        ((?. ? ) . ?\x2024)    ;; one-dot leader
+        ((?. ?/) . ?\x2026)    ;; (horizontal) ellipsis
+        ((?. ?-) . ?\x30fb)    ;; CJK middle-dot
+        ))
 (defalias 'digra 'evil-enter-digraphs)  ;; evil-utils
 
 ;; evil-leader
@@ -837,6 +873,7 @@
   "cp" 'evilnc-comment-or-uncomment-paragraphs
   "cr" 'comment-or-uncomment-region
   "cv" 'evilnc-toggle-invert-comment-line-by-line
+  ","  'evilnc-comment-operator
   "k"  'kill-buffer
   "i"  'open-init-file
   "v"  'eval-region
@@ -846,14 +883,16 @@
   "g"  'ace-jump-line-mode
   "h"  'extra-help-map
   "l"  'helm-mini
+  "n"  'new-file
+  "o"  'find-file
   "9"  'kmacro-start-macro-or-insert-counter
   "0"  'kmacro-end-or-call-macro
   ">"  'evil-numbers/inc-at-pt
   "<"  'evil-numbers/dec-at-pt
   "."  'find-tag
-  "'" '(lambda (&optional arg) "Keyboard macro."
+  "'" '(lambda (&optional arg) "Quote surrounding WORD."
 	 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
-  "\"" '(lambda (&optional arg) "Keyboard macro."
+  "\"" '(lambda (&optional arg) "Quote surrounding word."
 	  (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
   )
 
@@ -870,6 +909,7 @@
 (require 'evil-jumper)
 
 ;; evil-nerd-commenter
+(require 'evil-nerd-commenter)
 ;; (setq evilnc-hotkey-comment-operator ",,")
 ;; (evilnc-default-hotkeys)
 (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
@@ -886,15 +926,44 @@
 (require 'evil-matchit)
 (global-evil-matchit-mode 1)
 
-;; ;; evil-snipe
-;; (add-to-list 'load-path "/home/troy/evil-snipe") ;; remove when merged
-;; (require 'evil-snipe)
-;; (global-evil-snipe-mode 1)
-;; ;; ;; Optional!
-;; ;; (evil-snipe-replace-evil) ;; replaces evil-mode's f/F/t/T/;/, with snipe
-;; ;; (evil-snipe-enable-nN)    ;; enable repeating with n/N (not implemented)
-;; ;; ;; not necessary if using (evil-snipe-replace-evil)
-;; ;; (evil-snipe-enable-sS)    ;; enable repeating with s/S
+;; evil-snipe
+(require 'evil-snipe)
+(evil-snipe-mode 1)
+
+(defun evil-snipe-multi-bracket ()
+  "Use [ for matching [,{,( and ] for ],},)."
+  (interactive)
+  ;; ?[ breaks autoindent
+  (evil-snipe-add-alias (string-to-char "[") "[[{(]")
+  (evil-snipe-add-alias (string-to-char "]") "[]})]"))
+(add-hook 'emacs-lisp-mode-hook 'evil-snipe-multi-bracket)
+
+;; ;; evil-snipe-override-mode: replace evil-mode's f/F/t/T/;/, with snipe
+(defun evil-snipe-toggle-override-mode ()
+  (interactive)
+  (evil-snipe-override-mode
+   (if (evil-snipe-override-mode) 0 1)))
+;; (evil-snipe-override-mode 1)
+;; (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+
+(setf evil-snipe-scope 'whole-visible)
+(setf evil-snipe-repeat-scope 'whole-visible)
+(evil-define-key 'visual evil-snipe-mode-map "z" 'evil-snipe-s)
+(evil-define-key 'visual evil-snipe-mode-map "Z" 'evil-snipe-S)
+(evil-define-key 'motion evil-snipe-mode-map "s" 'evil-snipe-s)
+(evil-define-key 'motion evil-snipe-mode-map "S" 'evil-snipe-S)
+(evil-define-key 'operator evil-snipe-mode-map "z" 'evil-snipe-s)
+(evil-define-key 'operator evil-snipe-mode-map "Z" 'evil-snipe-S)
+(evil-define-key 'operator evil-snipe-mode-map "x" 'evil-snipe-x)
+(evil-define-key 'operator evil-snipe-mode-map "X" 'evil-snipe-X)
+;; bindings take eff ect when evil-snipe-override-mode is on.
+(evil-define-key 'motion evil-snipe-override-mode-map "f" 'evil-snipe-f)
+(evil-define-key 'motion evil-snipe-override-mode-map "F" 'evil-snipe-F)
+(evil-define-key 'motion evil-snipe-override-mode-map "t" 'evil-snipe-t)
+(evil-define-key 'motion evil-snipe-override-mode-map "T" 'evil-snipe-T)
+(when evil-snipe-override-evil-repeat-keys
+  (evil-define-key 'motion map ";" 'evil-snipe-repeat)
+  (evil-define-key 'motion map "," 'evil-snipe-repeat-reverse))
 
 ;; evil-surround
 (require 'surround)
@@ -1633,18 +1702,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (find-file "~/.emacs.d/init.el"))
 
 
-;; ------------------------------------------------------------------------
-;; LOAD AUXILLARY FILES.
-
-(setq aux-elisp-files
-      '("~/.emacs.d/lisp/troyp/utils.el"
-		"~/.emacs.d/lisp/troyp/headings.el"
-		"~/.emacs.d/lisp/smooth-scrolling.el"
-		"~/.emacs.d/lisp/move-text.el"
-		"~/.emacs.d/lisp/search-bindings.el"
-		))
-(loop for f in aux-elisp-files do
-      (if (file-exists-p f) (load f)))
+;; -----------------------------------------------------------------------------
 
 ;; *********
 ;; *       *
@@ -1807,6 +1865,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (newline)                             ; insert a newline
   (switch-to-buffer nil))               ; return to the initial buffer
 
+(defun new-file (filename &optional wildcards)
+  "Open new file. Derived from Emacs source. GPL3."
+  (interactive
+   (find-file-read-args
+    "Find file: "
+    (confirm-nonexistent-file-or-buffer)))
+  (let ((value (find-file-noselect filename nil nil wildcards)))
+    (if (listp value)
+        (mapcar 'switch-to-buffer (nreverse value))
+      (switch-to-buffer value))))
+ 
+
 ;; ***********
 ;; *         *
 ;; * ALIASES *
@@ -1832,6 +1902,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defalias 'vll 'visual-line-mode)
 (defalias 'undefun 'fmakunbound)
 (defalias 'acoff 'auto-complete-mode-off)
+(defalias 'ali 'quick-pcre-align-repeat)
 
 ;; FINAL
 (setq skeleton-pair nil)

@@ -38,6 +38,7 @@ python-mode/
 python-mode.el/
 semanticdb/
 snippets-downloaded/
+undohist/
 url/
 TAGS
 GTAGS

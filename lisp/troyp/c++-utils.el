@@ -25,3 +25,7 @@
     (insert "\n}") (c-indent-line-or-region)
     (insert "\n}") (c-indent-line-or-region)
     (insert "\n")))
+
+(defun align-c-end-comment (BEG END)
+  (interactive "r")
+  (align-regexp BEG END "\\(\\s-*\\)\\*/"))
