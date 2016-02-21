@@ -1,0 +1,7 @@
+# -*- mode: snippet; -*-
+# name: perl
+# key: !
+# --
+#! /usr/bin/env perl
+
+$0

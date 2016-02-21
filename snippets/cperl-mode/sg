@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sg
+# key: sg
+# --
+s/$1/$2/g$0
