@@ -358,6 +358,8 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;                                      | ALIGN |
 ;;                                      |_______|
 
+(unless (boundp 'align-default-spacing) (setf align-default-spacing 1))
+
 (defun pcre-align (BEG END s &optional group spacing repeat)
   "Align region using a PCRE. Requires pcre2el."
   (interactive "r\nsPCRE (group around part to extend): ")
