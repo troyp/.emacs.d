@@ -863,37 +863,44 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
-  "e"  'helm-find-file
-  "s"  'load-init-file
+  "e"      'helm-find-file
+  "s"      'load-init-file
   "<SPC>"  [?\C-x ?b return]  ;; switch to last used buffer
-  "b"  'switch-to-buffer
-  "ci" 'evilnc-comment-or-uncomment-lines
-  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
-  "cc" 'evilnc-copy-and-comment-lines
-  "cp" 'evilnc-comment-or-uncomment-paragraphs
-  "cr" 'comment-or-uncomment-region
-  "cv" 'evilnc-toggle-invert-comment-line-by-line
-  ","  'evilnc-comment-operator
-  "k"  'kill-buffer
-  "i"  'open-init-file
-  "v"  'eval-region
-  "V"  'eval-buffer
-  "a"  'ace-jump-word-mode
-  "f"  'ace-jump-char-mode
-  "g"  'ace-jump-line-mode
-  "h"  'extra-help-map
-  "l"  'helm-mini
-  "n"  'new-file
-  "o"  'find-file
-  "9"  'kmacro-start-macro-or-insert-counter
-  "0"  'kmacro-end-or-call-macro
-  ">"  'evil-numbers/inc-at-pt
-  "<"  'evil-numbers/dec-at-pt
-  "."  'find-tag
-  "'" '(lambda (&optional arg) "Quote surrounding WORD."
-	 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
-  "\"" '(lambda (&optional arg) "Quote surrounding word."
-	  (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
+  "b"      'switch-to-buffer
+  "ci"     'evilnc-comment-or-uncomment-lines
+  "cl"     'evilnc-quick-comment-or-uncomment-to-the-line
+  "cc"     'evilnc-copy-and-comment-lines
+  "cp"     'evilnc-comment-or-uncomment-paragraphs
+  "cr"     'comment-or-uncomment-region
+  "cv"     'evilnc-toggle-invert-comment-line-by-line
+  ","      'evilnc-comment-operator
+  "k"      'kill-buffer
+  "i"      'open-init-file
+  "v"      'eval-region
+  "V"      'eval-buffer
+  "a"      'ace-jump-word-mode
+  "f"      'ace-jump-char-mode
+  "g"      'ace-jump-line-mode
+  "h"      'extra-help-map
+  "l"      'helm-mini
+  "n"      'new-file
+  "o"      'find-file
+  "1"      'delete-other-windows
+  "2"      'split-window-below
+  "3"      'split-window-right
+  "4"      'ctl-x-4-prefix    ;; other window commands
+  "0"      'delete-window
+  "["      'kmacro-start-macro-or-insert-counter
+  "]"      'kmacro-end-or-call-macro
+  "<f2>"   '2C-command
+  "<f4>"   'delete-other-window
+  ">"      'evil-numbers/inc-at-pt
+  "<"      'evil-numbers/dec-at-pt
+  "."      'find-tag
+  "'"      '(lambda (&optional arg) "Quote surrounding WORD."
+              (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
+  "\""     '(lambda (&optional arg) "Quote surrounding word."
+              (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
   )
 
 ;; -------
@@ -1564,6 +1571,8 @@
 	(append term-bind-key-alist-defaults
 		my-term-bind-key-alist)))
 (add-hook 'term-mode-hook 'my-ansi-mode-hook)
+
+(require 'multi-term)
 (global-set-key (kbd "<f5>") 'multi-term)
 (global-set-key (kbd "<C-next>") 'multi-term-next)
 (global-set-key (kbd "<C-prior>") 'multi-term-prev)
@@ -1908,3 +1917,4 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq skeleton-pair nil)
 (put 'upcase-region 'disabled nil)
 (cua-mode 0)
+(put 'narrow-to-region 'disabled nil)
