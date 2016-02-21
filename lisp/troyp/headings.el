@@ -4,7 +4,9 @@
 ;;       | HEADING FUNCTIONS |
 ;;       |___________________|
 
-(load "troyp/utils.el")
+(require "troyp/utils.el")
+
+;; TODO: rename functions with module prefix
 
 ;; ---------------------------------------------------------------------------
 ;; ,-----------------------,
@@ -18,7 +20,6 @@
 (defvar *heading-symbol* ?-)
 
 (defun box-heading-lines (s)
-  (interactive)
   (unless (has-value-p *box-heading-symbol*) (setq *box-heading-symbol* "**"))
   (unless (has-value-p *box-heading-margin*) (setq *box-heading-margin* 1))
   (unless (has-value-p *box-heading-vmargin*) (setq *box-heading-vmargin* *box-heading-margin*))
@@ -77,7 +78,6 @@
 (defvar *rect-heading-omit-right*)
 (defvar *rect-heading-omit-top*)
 (defun rect-heading-lines (s)
-  (interactive)
   (unless (has-value-p *rect-heading-omit-top*)   (setq *rect-heading-omit-top* nil))
   (unless (has-value-p *rect-heading-omit-left*)  (setq *rect-heading-omit-left* nil))
   (unless (has-value-p *rect-heading-omit-right*) (setq *rect-heading-omit-right* nil))
@@ -133,13 +133,13 @@
 (fset 'rect-heading (make-heading-command 'rect-heading-lines))
 (fset 'short-rect-heading (make-heading-command 'short-rect-heading-lines))
 
-(defun rect-heading-under (s)
+(defun rect-heading-join-under (s)
   (let ((*rect-heading-omit-top* 't))    (rect-heading s)))
-(defun rect-heading-right (s)
+(defun rect-heading-join-right (s)
   (let ((*rect-heading-omit-left* 't))   (rect-heading s)))
-(defun rect-heading-left (s)
+(defun rect-heading-join-left (s)
   (let ((*rect-heading-omit-right* 't))  (rect-heading s)))
-(defun rect-heading-above (s)
+(defun rect-heading-join-above (s)
   (let ((*rect-heading-omit-bottom* 't)) (rect-heading s)))
 
 ;; ---------------------------------------------------------------------------
@@ -171,7 +171,8 @@
   (interactive)
   (unless char (setf char ?-))
   (unless length-adjustment (setf length-adjustment 0))
-  (let* ((beg (line-beginning-position))
+  (let* ((beg (save-excursion (back-to-indentation)
+                              (point)))
          (end (line-end-position))
          (content-end (progn
                         (goto-char end)
@@ -196,6 +197,7 @@
   (underline char length-adjustment t))
 
 (defun underline-comment (&optional char length-adjustment start-new-line)
+  ;; TODO: refactor using #'comment-str-total-length
   (interactive)
   (unless length-adjustment (setf length-adjustment 0))
   (let* ((comment-char-len  (if (and (string-empty-p comment-end)
@@ -218,10 +220,27 @@
       (goto-char end-of-comment-pos)
       (newline))))
     
+(defun underline-comment-and-open-line-below (&optional char length-adjustment)
+  (interactive)
+  (underline-comment char length-adjustment t))
+
+(cl-defun comment-str-total-length (&optional (adjusted 't))
+  "Returns the total length of comment characters used in comment commands.
+Comment commands double a single-char comment-start string when there is no
+comment-end string. ADJUSTED (default value: 't) corrects the result for this."
+  (let* ((comment-char-len  (if (and (string-empty-p comment-end)
+                                     (= (length comment-start) 1)
+                                     adjusted)
+                                2
+                              (+ (length comment-start)
+                                 (length comment-end))))
+         ;; adjustment: if no comment-end string and comment-start is a single char,
+         ;;             comment functions use two comment-start characters.
+         (comment-pad-len         (length comment-padding)))
+    (+ comment-char-len
+       comment-pad-len)))
+                                     
     
-
-               
-
 ;; ===========================================================================
 ;;        ____________________________ 
 ;;       |                            |
@@ -235,11 +254,12 @@
 ;; '------------------'
 
 (defvar *divider-char* ?-)
+
 (defun divider (n)
   (interactive "p")
   (if (= n 1) (setf n 79))
   (move-beginning-of-line nil)
-  (insert (make-string (- n 2) *divider-char*))
+  (insert (make-string n *divider-char*))
   (newline))
 
 (defun divider-thick (n)
@@ -247,12 +267,13 @@
   (let ((*divider-char* ?=))
     (if (= n 1) (setf n 79))
     (move-beginning-of-line nil)
-    (insert (make-string (- n 2) *divider-char*))
+    (insert (make-string n *divider-char*))
     (newline)))
 
 (defun divider-comment (n)
   (interactive "p")
   (with-comment divider n))
+
 (defun divider-thick-comment (n)
   (interactive "p")
   (with-comment divider-thick n))
@@ -262,7 +283,9 @@
 ;; | Section Commands |
 ;; '------------------'
 
-(defun srh-section (s &optional n)
+(defun srh-section-comment (s &optional n)
+  "Simple rectangular section heading. Using comment syntax, inserts a
+divider followed by a simple rectangular heading."
   (interactive "sheading: \np")
   (if (= n 1) (setf n 79))
   (push-mark (point))
@@ -275,7 +298,9 @@
   (next-line)
   (pop-mark))
 
-(defun rh-section (s &optional n &optional heading-indent)
+(defun rh-section-comment (s &optional n &optional heading-indent)
+  "Rectangular section heading. Using comment syntax, 
+inserts a divider followed by a rectangular heading."
   (interactive "sheading: \np")
   (if (= n 1) (setf n 79))
   (unless heading-indent
@@ -289,3 +314,29 @@
   (comment-region (mark) (point))
   (next-line)
   (pop-mark))
+
+;; -----------------------------------------------------------------------------
+
+(define-prefix-command 'asciiheadings-prefix-key-map)
+(define-prefix-command 'asciiheadings-comment-prefix-key-map)
+(define-key 'asciiheadings-prefix-key-map   ";"  'asciiheadings-comment-prefix-key-map)
+(define-key 'asciiheadings-prefix-key-map   "_"  'underline)
+(define-key 'asciiheadings-prefix-key-map   ";_"  'underline-comment)
+(define-key 'asciiheadings-prefix-key-map   "u"  'underline-and-open-line-below)
+(define-key 'asciiheadings-prefix-key-map   ";u"  'underline-comment-and-open-line-below)
+(define-key 'asciiheadings-prefix-key-map   "d"  'divider)
+(define-key 'asciiheadings-prefix-key-map   ";d"  'divider-comment)
+(define-key 'asciiheadings-prefix-key-map   "t"  'divider-thick)
+(define-key 'asciiheadings-prefix-key-map   ";t"  'divider-thick-comment)
+(define-key 'asciiheadings-prefix-key-map   "b"  'box-heading)
+(define-key 'asciiheadings-prefix-key-map   ";b"  'box-heading-comment)
+(define-key 'asciiheadings-prefix-key-map   "R"  'rect-heading)
+(define-key 'asciiheadings-prefix-key-map   ";R"  'rect-heading-comment)
+(define-key 'asciiheadings-prefix-key-map   "r"  'short-rect-heading)
+(define-key 'asciiheadings-prefix-key-map   ";r"  'short-rect-heading-comment)
+(define-key 'asciiheadings-prefix-key-map   "S"  'rh-section-comment)
+(define-key 'asciiheadings-prefix-key-map   "s"  'srh-section-comment)
+
+;; -----------------------------------------------------------------------------
+
+(provide 'asciiheadings)
