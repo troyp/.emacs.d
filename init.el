@@ -133,7 +133,6 @@
 
 (setq aux-elisp-files
       '("~/.emacs.d/lisp/troyp/utils.el"
-		"~/.emacs.d/lisp/troyp/headings.el"
 		"~/.emacs.d/lisp/smooth-scrolling.el"
 		"~/.emacs.d/lisp/move-text.el"
 		"~/.emacs.d/lisp/search-bindings.el"
@@ -145,6 +144,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/troyp")
 (require 'mode-ring)
+(require 'asciiheadings)
 
 
 ;; ===========================================================================
@@ -902,8 +902,9 @@
               (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
   "\""     '(lambda (&optional arg) "Quote surrounding word."
               (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
-  "\\"      'quick-pcre-align
-  "|"       'quick-pcre-align-repeat
+  "\\"     'quick-pcre-align
+  "|"      'quick-pcre-align-repeat
+  ";"      'asciiheadings-prefix-key-map
   )
 
 ;; -------
