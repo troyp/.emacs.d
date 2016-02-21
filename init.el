@@ -883,6 +883,7 @@
   "g"      'ace-jump-line-mode
   "h"      'extra-help-map
   "l"      'helm-mini
+  "m"      'mode-ring-prefix-key-map
   "n"      'new-file
   "o"      'find-file
   "1"      'delete-other-windows
@@ -901,6 +902,8 @@
               (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
   "\""     '(lambda (&optional arg) "Quote surrounding word."
               (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
+  "\\"      'quick-pcre-align
+  "|"       'quick-pcre-align-repeat
   )
 
 ;; -------
@@ -1754,15 +1757,43 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
    (define-key sh-mode-map "\C-x\\" 'insert-continuation)
    (define-key sh-mode-map (kbd "C-'") 'insert-backquote)))
 
+;; ***********
+;; *         *
+;; * KEYMAPS *
+;; *         *
+;; ***********
+
+(defun extra-help-apropos-all-variables (s)
+  (interactive "sVariable: ")
+  (apropos-variable s t))
+(defun extra-help-apropos-user-variables (s)
+  (interactive "sVariable: ")
+  (apropos-variable s))
+
+;; define key sequence relative to prefix key
+(define-prefix-command 'extra-help-map)
+(define-key 'extra-help-map "va" 'extra-help-apropos-all-variables)
+(define-key 'extra-help-map "vu" 'extra-help-apropos-user-variables)
+
+;; define key sequence explicitly
+(define-prefix-command 'menu-key-map)
+(global-set-key (kbd "<menu>") 'menu-key-map)
+(global-set-key (kbd "<menu>1") 'linum-mode)
+
+(define-prefix-command 'mode-ring-prefix-key-map)
+(define-key 'mode-ring-prefix-key-map "q" 'mode-ring-enqueue)
+(define-key 'mode-ring-prefix-key-map (kbd "SPC") 'mode-ring-cycle)
+(define-key 'mode-ring-prefix-key-map "u" 'mode-ring-push)
+(define-key 'mode-ring-prefix-key-map "p" 'mode-ring-pop)
+(define-key 'mode-ring-prefix-key-map "l" 'mode-ring-list)
+
+
+
 ;; ****************
 ;; *              *
 ;; * KEY BINDINGS *
 ;; *              *
 ;; ****************
-
-(define-prefix-command 'menu-key-map)
-(global-set-key (kbd "<menu>") 'menu-key-map)
-(global-set-key (kbd "<menu>1") 'linum-mode)
 
 (defun get-face (&optional pos)
   (interactive)
@@ -1821,25 +1852,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; KEYBOARD MACROS.
 ;; 
 (fset 'switch-to-most-recent-buffer [?\C-x ?b return])
-
-;; ***********
-;; *         *
-;; * KEYMAPS *
-;; *         *
-;; ***********
-
-(defun extra-help-apropos-all-variables (s)
-  (interactive "sVariable: ")
-  (apropos-variable s t))
-(defun extra-help-apropos-user-variables (s)
-  (interactive "sVariable: ")
-  (apropos-variable s))
-
-(define-prefix-command 'extra-help-map)
-
-(define-key 'extra-help-map "va" 'extra-help-apropos-all-variables)
-(define-key 'extra-help-map "vu" 'extra-help-apropos-user-variables)
-
 
 
 ;; *************
