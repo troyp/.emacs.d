@@ -44,22 +44,19 @@
 (setq mode-rings (make-hash-table))
 
 (defun mode-ring-push (&optional mode)
+  (interactive)
   (letrec ((ring (gethash (current-buffer) mode-rings))
            (newring (-distinct (cons (or mode major-mode) ring))))
     (puthash (current-buffer) newring mode-rings)))
 
 (defun mode-ring-enqueue (&optional mode)
+  (interactive)
   (letrec ((ring (gethash (current-buffer) mode-rings))
            (newring (reverse (-distinct (reverse (-snoc ring (or mode major-mode)))))))
     (puthash (current-buffer) newring mode-rings)))
 
-(defun mode-ring-enqueue (&optional mode)
-  (let ((ring (gethash (current-buffer) mode-rings)))
-    (add-to-list 'ring (or mode major-mode))
-    (puthash (current-buffer) ring mode-rings)
-    (gethash (current-buffer) mode-rings)))
-
 (defun mode-ring-pop ()
+  (interactive)
   (if (boundp 'mode-rings)
       (let ((ring (gethash (current-buffer) mode-rings)))
         (if (not (null ring))
@@ -69,6 +66,7 @@
               (puthash (current-buffer) ring mode-rings))))))
 
 (defun mode-ring-cycle ()
+  (interactive)
   (if (boundp 'mode-rings)
       (letrec ((ring (gethash (current-buffer) mode-rings))
                (newring (-rotate -1 ring)))
@@ -76,10 +74,21 @@
             (progn
               (funcall (car ring))
               (puthash (current-buffer) newring mode-rings))))))
+(defun mode-ring-list ()
+  (interactive)
+  (message (format "%s" (gethash (current-buffer) mode-rings))))
 
  
 ;; -----------------------------------------------------------------------------
 
+(define-prefix-command 'mode-ring-prefix-key-map)
+(define-key 'mode-ring-prefix-key-map "q" 'mode-ring-enqueue)
+(define-key 'mode-ring-prefix-key-map (kbd "SPC") 'mode-ring-cycle)
+(define-key 'mode-ring-prefix-key-map "u" 'mode-ring-push)
+(define-key 'mode-ring-prefix-key-map "p" 'mode-ring-pop)
+(define-key 'mode-ring-prefix-key-map "l" 'mode-ring-list)
+
+;; -----------------------------------------------------------------------------
 
 (provide 'mode-ring)
 ;;; mode-ring.el ends here
