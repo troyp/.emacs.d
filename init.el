@@ -1780,14 +1780,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "<menu>") 'menu-key-map)
 (global-set-key (kbd "<menu>1") 'linum-mode)
 
-(define-prefix-command 'mode-ring-prefix-key-map)
-(define-key 'mode-ring-prefix-key-map "q" 'mode-ring-enqueue)
-(define-key 'mode-ring-prefix-key-map (kbd "SPC") 'mode-ring-cycle)
-(define-key 'mode-ring-prefix-key-map "u" 'mode-ring-push)
-(define-key 'mode-ring-prefix-key-map "p" 'mode-ring-pop)
-(define-key 'mode-ring-prefix-key-map "l" 'mode-ring-list)
-
-
 
 ;; ****************
 ;; *              *
