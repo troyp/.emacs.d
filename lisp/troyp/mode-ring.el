@@ -44,18 +44,21 @@
 (setq mode-rings (make-hash-table))
 
 (defun mode-ring-push (&optional mode)
+  "Insert mode at the front of the mode-ring."
   (interactive)
   (letrec ((ring (gethash (current-buffer) mode-rings))
            (newring (-distinct (cons (or mode major-mode) ring))))
     (puthash (current-buffer) newring mode-rings)))
 
 (defun mode-ring-enqueue (&optional mode)
+  "Insert mode at the end of the mode-ring."
   (interactive)
   (letrec ((ring (gethash (current-buffer) mode-rings))
            (newring (reverse (-distinct (reverse (-snoc ring (or mode major-mode)))))))
     (puthash (current-buffer) newring mode-rings)))
 
 (defun mode-ring-pop ()
+  "Remove the mode from the front of the mode-ring and switch to it."
   (interactive)
   (if (boundp 'mode-rings)
       (let ((ring (gethash (current-buffer) mode-rings)))
@@ -66,6 +69,7 @@
               (puthash (current-buffer) ring mode-rings))))))
 
 (defun mode-ring-cycle ()
+  "Switch to the mode at the front of the mode-ring and move that mode to the end of the ring."
   (interactive)
   (if (boundp 'mode-rings)
       (letrec ((ring (gethash (current-buffer) mode-rings))
@@ -74,7 +78,21 @@
             (progn
               (funcall (car ring))
               (puthash (current-buffer) newring mode-rings))))))
+
+(defun mode-ring-cycle-to-text-mode ()
+  "If the mode-ring is empty, add the current mode. Then switch to text-mode and place text-mode at the end of the ring."
+  (interactive)
+  (letrec ((ring (gethash (current-buffer) mode-rings))
+           (ring-nonempty (or ring (list major-mode)))
+           (newring (reverse
+                     (-distinct
+                      (reverse
+                       (-snoc ring-nonempty 'text-mode))))))
+    (text-mode)
+    (puthash (current-buffer) newring mode-rings)))
+
 (defun mode-ring-list ()
+  "Display the list of modes in the mode-ring in the minibuffer."
   (interactive)
   (message (format "%s" (gethash (current-buffer) mode-rings))))
 
@@ -82,11 +100,12 @@
 ;; -----------------------------------------------------------------------------
 
 (define-prefix-command 'mode-ring-prefix-key-map)
-(define-key 'mode-ring-prefix-key-map "q" 'mode-ring-enqueue)
+(define-key 'mode-ring-prefix-key-map        "q"  'mode-ring-enqueue)
 (define-key 'mode-ring-prefix-key-map (kbd "SPC") 'mode-ring-cycle)
-(define-key 'mode-ring-prefix-key-map "u" 'mode-ring-push)
-(define-key 'mode-ring-prefix-key-map "p" 'mode-ring-pop)
-(define-key 'mode-ring-prefix-key-map "l" 'mode-ring-list)
+(define-key 'mode-ring-prefix-key-map        "u"  'mode-ring-push)
+(define-key 'mode-ring-prefix-key-map        "p"  'mode-ring-pop)
+(define-key 'mode-ring-prefix-key-map        "l"  'mode-ring-list)
+(define-key 'mode-ring-prefix-key-map        "t"  'mode-ring-cycle-to-text-mode)
 
 ;; -----------------------------------------------------------------------------
 
