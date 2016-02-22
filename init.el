@@ -780,14 +780,13 @@
 ;; remove C-w C-h binding (steals C-h from help system)
 (define-key evil-window-map "\C-h" nil)
 
-;; normal-state
+;; NORMAL-STATE
 (defun insert-space () (interactive) (insert ? ))
 (define-key evil-normal-state-map (kbd "S-SPC") #'insert-space)
 (define-key evil-normal-state-map (kbd "TAB") #'indent-for-tab-command)
 (define-key evil-normal-state-map (kbd "C-S-d") #'evil-scroll-up)
 (define-key evil-normal-state-map (kbd "C-S-o") #'evil-jump-forward)
 (define-key evil-normal-state-map (kbd "C-e") #'end-of-line)
-;; (define-key evil-normal-state-map (kbd "C-:") #'evil-repeat-find-char-reverse)
 ;; (define-key evil-normal-state-map (kbd "C-;") #'evil-repeat-find-char-reverse)
 (define-key evil-normal-state-map (kbd "[ SPC") #'open-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") #'open-line-below)
@@ -797,16 +796,17 @@
 (define-key evil-normal-state-map (kbd "gu") #'evil-upcase)
 (define-key evil-normal-state-map (kbd "gU") #'evil-downcase)
 
-;; visual state
+;; VISUAL STATE
 (defun insert-space-visual () (interactive) (execute-kbd-macro " ") (evil-visual-restore))
 (define-key evil-visual-state-map (kbd "S-SPC") #'insert-space-visual)
 ;; (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
 (define-key evil-visual-state-map (kbd "C-SPC") #'evil-forward-char-or-extend)
 (define-key evil-visual-state-map (kbd "C-\\") #'shell-command-replace-region)
 
-;; motion state
+;; MOTION STATE
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
-;; insert state
+
+;; INSERT STATE
 (define-key evil-insert-state-map (kbd "C-S-a") #'evil-paste-last-insertion)
 (define-key evil-insert-state-map (kbd "C-a") #'beginning-of-line)
 (define-key evil-insert-state-map (kbd "C-e") #'end-of-line)
