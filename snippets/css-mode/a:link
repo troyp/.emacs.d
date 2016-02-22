@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: a:link
+# key: a:link
+# --
+a:link {
+    $0
+}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: a:visited
+# key: a:visited
+# --
+a:visited {
+    $0
+}

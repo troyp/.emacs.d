@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: a:hover
+# key: a:hover
+# --
+a:hover {
+    $1
+}
+
+a:hover {
+    $1
+}
+
+$0

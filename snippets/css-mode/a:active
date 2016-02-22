@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: a:active
+# key: a:active
+# --
+a:active {
+    $0
+}

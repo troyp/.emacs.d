@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: nav a
+# key: nava
+# --
+nav a {
+    $0
+}
