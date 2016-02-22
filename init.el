@@ -881,20 +881,20 @@
   "a"      'ace-jump-word-mode
   "f"      'ace-jump-char-mode
   "g"      'ace-jump-line-mode
-  "h"      'extra-help-map
+  "h"      'extra-help-map                 ;; (PREFIX)
   "l"      'helm-mini
-  "m"      'mode-ring-prefix-key-map
+  "m"      'mode-ring-prefix-key-map       ;; (PREFIX)
   "n"      'new-file
   "o"      'find-file
   "1"      'delete-other-windows
   "2"      'split-window-below
   "3"      'split-window-right
-  "4"      'ctl-x-4-prefix    ;; other window commands
+  "4"      'ctl-x-4-prefix                  ;; (PREFIX) other window commands
   "0"      'delete-window
   "["      'kmacro-start-macro-or-insert-counter
   "]"      'kmacro-end-or-call-macro
-  "<f2>"   '2C-command
-  "<f4>"   'delete-other-window
+  "<f2>"   '2C-command                      ;; (PREFIX)
+  "<f4>"   'delete-other-window             ;; (PREFIX)
   ">"      'evil-numbers/inc-at-pt
   "<"      'evil-numbers/dec-at-pt
   "."      'find-tag
@@ -904,7 +904,7 @@
               (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
   "\\"     'quick-pcre-align
   "|"      'quick-pcre-align-repeat
-  ";"      'asciiheadings-prefix-key-map
+  ";"      'asciiheadings-prefix-key-map     ;; (PREFIX)
   )
 
 ;; -------
