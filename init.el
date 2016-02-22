@@ -807,6 +807,8 @@
 ;; motion state
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
 ;; insert state
+(define-key evil-insert-state-map (kbd "C-S-a") #'evil-paste-last-insertion)
+(define-key evil-insert-state-map (kbd "C-a") #'beginning-of-line)
 (define-key evil-insert-state-map (kbd "C-e") #'end-of-line)
 (define-key evil-insert-state-map (kbd "C-S-y") #'evil-copy-from-below)
 (define-key evil-insert-state-map (kbd "C-v") #'insert-char)
