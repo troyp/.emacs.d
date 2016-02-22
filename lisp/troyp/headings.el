@@ -197,22 +197,13 @@
   (underline char length-adjustment t))
 
 (defun underline-comment (&optional char length-adjustment start-new-line)
-  ;; TODO: refactor using #'comment-str-total-length
   (interactive)
   (unless length-adjustment (setf length-adjustment 0))
-  (let* ((comment-char-len  (if (and (string-empty-p comment-end)
-                                     (= (length comment-start) 1))
-                                2
-                              (+ (length comment-start)
-                                 (length comment-end))))
-         ;; adjustment: if no comment-end string and comment-start is a single char,
-         ;;             comment functions use two comment-start characters.
-         (comment-str-len         (+ comment-char-len
-                                     (length comment-padding)))
-         (length-adjustment    (- length-adjustment comment-str-len))
-         (end-of-comment-pos   nil))
+  (let* ((comment-str-len     (comment-str-total-length t))
+         (length-delta        (- length-adjustment comment-str-len))
+         (end-of-comment-pos  nil))
     (save-excursion
-      (underline char length-adjustment nil)
+      (underline char length-delta nil)
       (next-line)
       (comment-region-lines (line-beginning-position) (line-end-position))
       (setf end-of-comment-pos (line-end-position)))
@@ -228,18 +219,23 @@
   "Returns the total length of comment characters used in comment commands.
 Comment commands double a single-char comment-start string when there is no
 comment-end string. ADJUSTED (default value: 't) corrects the result for this."
-  (let* ((comment-char-len  (if (and (string-empty-p comment-end)
-                                     (= (length comment-start) 1)
-                                     adjusted)
-                                2
-                              (+ (length comment-start)
-                                 (length comment-end))))
+  (let* ((comment-start-len  (length comment-start))
+         (comment-end-len    (length comment-end))
+         (comment-pad-len    (length comment-padding))
+         (line-end-comment-p (string-empty-p comment-end))
+         (block-comment-p    (not line-end-comment-p))
+         (comment-adjusted-start-len  (if (and adjusted
+                                               line-end-comment-p
+                                               (= comment-start-len 1))
+                                          2
+                                        comment-start-len))
          ;; adjustment: if no comment-end string and comment-start is a single char,
          ;;             comment functions use two comment-start characters.
-         (comment-pad-len         (length comment-padding)))
-    (+ comment-char-len
-       comment-pad-len)))
-                                     
+         (comment-total-pad-len   (cond (line-end-comment-p       comment-pad-len)
+                                        (block-comment-p       (* 2 comment-pad-len)))))
+    (+ comment-adjusted-start-len
+       comment-end-len
+       comment-total-pad-len)))
     
 ;; ===========================================================================
 ;;        ____________________________ 
