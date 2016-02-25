@@ -1080,12 +1080,9 @@
 ;; * PROGRAMMING LANGUAGES *
 ;; *                       *
 ;; *************************
-
-;; *********
-;; *       *
-;; * C/C++ *
-;; *       *
-;; *********
+;; ,-------,
+;; | C/C++ |
+;; '-------'
 
 ;; (setq c-basic-offset 4)
 (c-add-style "troy"
@@ -1153,21 +1150,19 @@
       (comment-use-block-comments)
     (comment-use-line-comments)))
 
-;; *******
-;; *     *
-;; *  D  *
-;; *     *
-;; *******
+;; -------------------------------------------------------------------------------
+;; ,---,
+;; | D |
+;; '---'
 
 (autoload 'd-mode "d-mode" "Major mode for editing D code." t)
 (add-to-list 'auto-mode-alist '("\\.d[i]?\\'" . d-mode))
 
 
-;; **********
-;; *        *
-;; * Erlang *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Erlang |
+;; '--------'
 
 ;; (setq load-path (cons (car (file-expand-wildcards "/usr/lib/erlang/lib/tools-*/emacs"))
 ;; 		      load-path))
@@ -1181,11 +1176,10 @@
 ;; (distel-setup)
 
 
-;; **********
-;; *        *
-;; * Factor *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Factor |
+;; '--------'
 
 (defun run-fuel ()
   (interactive)
@@ -1194,11 +1188,10 @@
 (add-hook 'factor-mode-hook (lambda () (variable-pitch-mode t)))
 
 
-;; ***********
-;; *         *
-;; * Haskell *
-;; *         *
-;; ***********
+;; -------------------------------------------------------------------------------
+;; ,---------,
+;; | Haskell |
+;; '---------'
 
 (add-hook 'haskell-mode-hook 'haskell-indent-mode)
 (add-hook 'haskell-mode-hook 'haskell-doc-mode)
@@ -1230,11 +1223,10 @@
 ;; (setq scion-completing-read-function 'ido-completing-read)
 
 
-;; *******
-;; *     *
-;; *  J  *
-;; *     *
-;; *******
+;; -------------------------------------------------------------------------------
+;; ,---,
+;; | J |
+;; '---'
 
 (autoload 'j-mode "j-mode.el"  "Major mode for J." t)
 (autoload 'j-shell "j-mode.el" "Run J from emacs." t)
@@ -1245,11 +1237,10 @@
 (setq j-command "bin/jconsole")
 
 
-;; **************
-;; *            *
-;; * Javascript *
-;; *            *
-;; **************
+;; -------------------------------------------------------------------------------
+;; ,------------,
+;; | Javascript |
+;; '------------'
 
 ;; add js2-minor-mode to js-mode
 (add-hook 'js-mode-hook
@@ -1271,11 +1262,11 @@
   (face-remap-add-relative 'js2-error nil))
 
 
-;; ************
-;; *          *
-;; * Markdown *
-;; *          *
-;; ************
+;; -------------------------------------------------------------------------------
+;; ,----------,
+;; | Markdown |
+;; '----------'
+
 ;; ------------------------
 ;;   Polymode - RMarkdown
 ;; ------------------------
@@ -1290,11 +1281,10 @@
 (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
 
 
-;; **********
-;; *        *
-;; * Octave *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Octave |
+;; '--------'
 
 (autoload 'octave-mode "octave-mod" nil t)
 (setq auto-mode-alist
@@ -1307,11 +1297,10 @@
 		(font-lock-mode 1))))
 
 
-;; ********
-;; *      *
-;; *  Oz  *
-;; *      *
-;; ********
+;; -------------------------------------------------------------------------------
+;; ,----,
+;; | Oz |
+;; '----'
 
 ;; (or (getenv "OZHOME") (setenv "OZHOME" "/opt/mozart2"))
 (or (getenv "OZHOME") (setenv "OZHOME" "/usr"))
@@ -1331,11 +1320,10 @@
 (define-key oz-mode-map (kbd "M-n") 'evil-scroll-line-down)
 
 
-;; ********
-;; *      *
-;; * Perl *
-;; *      *
-;; ********
+;; -------------------------------------------------------------------------------
+;; ,------,
+;; | Perl |
+;; '------'
 
 (add-to-list 'load-path "/home/troy/.emacs.d/Emacs-PDE-0.2.16/lisp/")
 (load "pde-load")
@@ -1346,11 +1334,10 @@
 (add-hook 'cperl-mode-hook 'perl-completion-on)
 
 
-;; **********
-;; *        *
-;; * PROLOG *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Prolog |
+;; '--------'
 
 (autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
@@ -1366,11 +1353,10 @@
        auto-mode-alist))
 
 
-;; **********
-;; *        *
-;; * Python *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Python |
+;; '--------'
 
 ;; ----------------
 ;; emacs for python
@@ -1415,11 +1401,10 @@
 (setq jedi:complete-on-dot t)
 
 
-;; *******
-;; *     *
-;; *  R  *
-;; *     *
-;; *******
+;; -------------------------------------------------------------------------------
+;; ,---,
+;; | R |
+;; '---'
 
 ;; -------
 ;;   ESS
@@ -1455,21 +1440,20 @@
 
 ;; RMarkdown (polymode): see Markdown.
 
-;; ********
-;; *      *
-;; * SAGE *
-;; *      *
-;; ********
+;; -------------------------------------------------------------------------------
+;; ,------,
+;; | Sage |
+;; '------'
+
 ;; (add-to-list 'load-path "/usr/lib/sagemath/local/share/emacs/site-lisp/sage-mode/")
 ;; (require 'sage "sage")
 ;; (setq sage-command "/usr/lib/sagemath/sage")
 
 
-;; *********
-;; *       *
-;; * Scala *
-;; *       *
-;; *********
+;; -------------------------------------------------------------------------------
+;; ,-------,
+;; | Scala |
+;; '-------'
 
 ;; Scala-mode.
 ;; (add-to-list 'load-path "~/.emacs.d/scala-mode2-master")
@@ -1494,11 +1478,10 @@
 (add-to-list 'exec-path "/opt/sbt/bin/")
 
 
-;; **********
-;; *        *
-;; * Scheme *
-;; *        *
-;; **********
+;; -------------------------------------------------------------------------------
+;; ,--------,
+;; | Scheme |
+;; '--------'
 
 (add-hook 'scheme-mode-hook 'my-scheme-mode-hook)
 (defun my-scheme-mode-hook ()
@@ -1526,11 +1509,10 @@
   "Custom highlighting in Scheme modes.")
 
 
-;; *********
-;; *       *
-;; * Shell *
-;; *       *
-;; *********
+;; -------------------------------------------------------------------------------
+;; ,-------,
+;; | Shell |
+;; '-------'
 
 ;; shell-script
 (add-to-list 'auto-mode-alist '("\\.bash" . sh-mode))
@@ -1585,20 +1567,10 @@
 (global-set-key (kbd "<C-prior>") 'multi-term-prev)
 (setq multi-term-program "/bin/bash")
 
-
-;; *******
-;; *     *
-;; * SML *
-;; *     *
-;; *******
-
-
-;; ***********
-;; *         *
-;; * WEB DEV *
-;; *         *
-;; ***********
-(skewer-setup)
+;; -------------------------------------------------------------------------------
+;; ,---------,
+;; | Web Dev |
+;; '---------'
 
 (defun htmlentify (start end)
   (interactive "r")
