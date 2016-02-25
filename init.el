@@ -876,6 +876,7 @@
   "cr"     'comment-or-uncomment-region
   "cv"     'evilnc-toggle-invert-comment-line-by-line
   ","      'evilnc-comment-operator
+  "d"      'evilmi-jump-items
   "k"      'kill-buffer
   "i"      'open-init-file
   "v"      'eval-region
