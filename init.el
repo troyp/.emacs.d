@@ -1686,18 +1686,6 @@
 
 ;; ------------------------------------------------------------------------
 ;; UTILITY FUNCTIONS.
-;; (defun bprint (x)    // use "insert"
-;;   (print x (current-buffer)))
-
-(defun kill-and-close-window ()
-  (interactive)
-  (kill-buffer)
-  (delete-window))
-(global-set-key "\C-xc" 'kill-and-close-window)
-
-(defun kill-current-buffer ()
-  (interactive)
-  (kill-buffer nil))
 
 ;; https://github.com/davvil/.emacs.d/blob/master/init.el
 (defun minibuffer-keyboard-quit ()
@@ -1709,13 +1697,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
       (setq deactivate-mark  t)
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
-
-(defun load-init-file ()
-  (interactive)
-  (load-file "~/.emacs.d/init.el"))
-(defun open-init-file ()
-  (interactive)
-  (find-file "~/.emacs.d/init.el"))
 
 
 ;; -----------------------------------------------------------------------------

@@ -118,6 +118,31 @@
      (buffer-string)))
 
 
+;; ===============================================================================
+;;                             __________________________ 
+;;                            |                          |
+;;                            | FILE AND BUFFER COMMANDS |
+;;                            |__________________________|
+
+
+(defun kill-and-close-window ()
+  (interactive)
+  (kill-buffer)
+  (delete-window))
+(global-set-key "\C-xc" 'kill-and-close-window)
+
+(defun kill-current-buffer ()
+  (interactive)
+  (kill-buffer nil))
+
+(defun load-init-file ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+(defun open-init-file ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
+
 ;; =============================================================================
 ;;                            _____________________________ 
 ;;                           |                             |
