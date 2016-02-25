@@ -802,6 +802,8 @@
 ;; (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
 (define-key evil-visual-state-map (kbd "C-SPC") #'evil-forward-char-or-extend)
 (define-key evil-visual-state-map (kbd "C-\\") #'shell-command-replace-region)
+(define-key evil-visual-state-map (kbd "M-u") #'evil-upcase)
+(define-key evil-visual-state-map (kbd "M-l") #'evil-downcase)
 
 ;; MOTION STATE
 (define-key evil-motion-state-map (kbd "C-e") #'end-of-line)
