@@ -993,31 +993,6 @@
 ;; evil-visualstar
 (require 'evil-visualstar)
 
-;; **********************
-;; *                    *
-;; * VIMRC-GENERIC-MODE *
-;; *                    *
-;; **********************
-
-
-;; ;; defined by Gilles in:
-;; ;; http://stackoverflow.com/questions/4236808/syntax-highlight-a-vimrc-file-in-emacs
-;; (define-generic-mode 'vimrc-generic-mode
-;;   '()
-;;   '()
-;;   '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
-;;      (0 font-lock-warning-face))
-;;     ("\\(^\\|[\t ]\\)\\(\".*\\)$"
-;;      (2 font-lock-comment-face))
-;;     ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
-;;      (0 font-lock-string-face)))
-;;   '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
-;;   '((lambda ()
-;;       (modify-syntax-entry ?\" ".")))
-;;   "Generic mode for Vim configuration files.")
-
-(add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?-?\\w*$" . vimrc-mode))
-(add-to-list 'auto-mode-alist '("\\.pentadactylrc-?\\w*$" . vimrc-mode))
 
 ;; ************
 ;; *          *
@@ -1566,6 +1541,31 @@
 (global-set-key (kbd "<C-next>") 'multi-term-next)
 (global-set-key (kbd "<C-prior>") 'multi-term-prev)
 (setq multi-term-program "/bin/bash")
+
+
+;; -------------------------------------------------------------------------------
+;; ,------,
+;; | VimL |
+;; '------'
+
+;; ;; defined by Gilles in:
+;; ;; http://stackoverflow.com/questions/4236808/syntax-highlight-a-vimrc-file-in-emacs
+;; (define-generic-mode 'vimrc-generic-mode
+;;   '()
+;;   '()
+;;   '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
+;;      (0 font-lock-warning-face))
+;;     ("\\(^\\|[\t ]\\)\\(\".*\\)$"
+;;      (2 font-lock-comment-face))
+;;     ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
+;;      (0 font-lock-string-face)))
+;;   '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
+;;   '((lambda ()
+;;       (modify-syntax-entry ?\" ".")))
+;;   "Generic mode for Vim configuration files.")
+
+(add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?-?\\w*$" . vimrc-mode))
+(add-to-list 'auto-mode-alist '("\\.pentadactylrc-?\\w*$" . vimrc-mode))
 
 ;; -------------------------------------------------------------------------------
 ;; ,---------,
