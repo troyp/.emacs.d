@@ -118,31 +118,6 @@
      (buffer-string)))
 
 
-;; ===============================================================================
-;;                             __________________________ 
-;;                            |                          |
-;;                            | FILE AND BUFFER COMMANDS |
-;;                            |__________________________|
-
-
-(defun kill-and-close-window ()
-  (interactive)
-  (kill-buffer)
-  (delete-window))
-(global-set-key "\C-xc" 'kill-and-close-window)
-
-(defun kill-current-buffer ()
-  (interactive)
-  (kill-buffer nil))
-
-(defun load-init-file ()
-  (interactive)
-  (load-file "~/.emacs.d/init.el"))
-(defun open-init-file ()
-  (interactive)
-  (find-file "~/.emacs.d/init.el"))
-
-
 ;; =============================================================================
 ;;                            _____________________________ 
 ;;                           |                             |
@@ -268,12 +243,30 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 				       (/= arg 1) t nil))))))
 
 
-;; =============================================================================
-;;                                   _______________ 
-;;                                  |               |
-;;                                  | FILE & BUFFER |
-;;                                  |_______________|
+;; ===============================================================================
+;;                             __________________________ 
+;;                            |                          |
+;;                            | FILE AND BUFFER COMMANDS |
+;;                            |__________________________|
 
+
+(defun kill-and-close-window ()
+  (interactive)
+  (kill-buffer)
+  (delete-window))
+(global-set-key "\C-xc" 'kill-and-close-window)
+
+(defun kill-current-buffer ()
+  (interactive)
+  (kill-buffer nil))
+
+(defun load-init-file ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+
+(defun open-init-file ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
 
 (defun rename-file-and-buffer (name)
   (interactive "snew name: ")
@@ -458,6 +451,57 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
      (eval ,CODE)))
 
 
+;; ===============================================================================
+;;                                ____________________ 
+;;                               |                    |
+;;                               | GLOBAL FONT HEIGHT |
+;;                               |____________________|
+
+;; note: for current buffer font-height only, use text-scale-adjust(C-x C-=, C-x C--)
+
+(defun get-font-size ()
+  "Returns the current default font size in decipoints"
+  (interactive)
+  (let ((font-height (face-attribute 'default :height nil 'default)))
+    (message (number-to-string font-height))
+    font-height))
+  
+(defun get-default-font-size ()
+  "Returns the current default font size in decipoints"
+  (interactive)
+  (let ((font-height (face-attribute 'default :height t 'default)))
+    (message (number-to-string font-height))
+    font-height))
+
+(defun set-font-size (FONT-HEIGHT)
+  "Sets the current default font size to FONT-HEIGHT in decipoints (defaults to 110 = 11pt)"
+  (interactive "NNew Font Height in pts: ")
+  (set-face-attribute 'default nil :height FONT-HEIGHT)
+  FONT-HEIGHT)
+
+(defun zoom-in (INC-HEIGHT)
+  "Increase font size by INC-HEIGHT decipoints (default 5 = 0.5 points)"
+  (interactive "p")
+  ;; default increment: 5 decipoints
+  (if (= INC-HEIGHT 1)
+      (setq INC-HEIGHT 5))
+ (let ((font-height (+ (get-font-size)
+			INC-HEIGHT)))
+    (set-font-size font-height)
+    (message (number-to-string font-height))))
+
+(defun zoom-out (DEC-HEIGHT)
+  "Increase font size by DEC-HEIGHT decipoints (default 5 = 0.5pts)"
+  (interactive "p")
+  ;; default increment: 5 decipoints
+  (if (= DEC-HEIGHT 1)
+      (setq DEC-HEIGHT 5))
+  (let ((font-height (- (get-font-size)
+			DEC-HEIGHT)))
+    (set-font-size font-height)
+    (message (number-to-string font-height))))
+
+
 ;; =============================================================================
 ;;                                       _______ 
 ;;                                      |       |
@@ -493,3 +537,12 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 		       t)))
   (shell-command-on-region START END COMMAND OUTPUT-BUFFER REPLACE
                            ERROR-BUFFER DISPLAY-ERROR-BUFFER))
+
+;; Set path correctly.
+(defun sync-path ()
+  (interactive)
+  (let ((sh-path (split-string-and-unquote
+		  (shell-command-to-string
+		   ". ~/.bashrc &> /dev/null; echo -n $PATH 2> /dev/null")
+		  ":")))
+    (setq exec-path (remove-dups (append exec-path sh-path)))))

@@ -1622,69 +1622,8 @@
 
 (require 'ass-mode)
 
-;; -----------------------------------------------------------------------------
-
-;; **********************
-;; *                    *
-;; * GLOBAL FONT HEIGHT *
-;; *                    *
-;; **********************
-;; note: for current buffer font-height only, use text-scale-adjust(C-x C-=, C-x C--)
-
-(defun get-font-size ()
-  "Returns the current default font size in decipoints"
-  (interactive)
-  (let ((font-height (face-attribute 'default :height nil 'default)))
-    (message (number-to-string font-height))
-    font-height))
-  
-(defun get-default-font-size ()
-  "Returns the current default font size in decipoints"
-  (interactive)
-  (let ((font-height (face-attribute 'default :height t 'default)))
-    (message (number-to-string font-height))
-    font-height))
-
-(defun set-font-size (FONT-HEIGHT)
-  "Sets the current default font size to FONT-HEIGHT in decipoints (defaults to 110 = 11pt)"
-  (interactive "NNew Font Height in pts: ")
-  (set-face-attribute 'default nil :height FONT-HEIGHT)
-  FONT-HEIGHT)
-
-(defun zoom-in (INC-HEIGHT)
-  "Increase font size by INC-HEIGHT decipoints (default 5 = 0.5 points)"
-  (interactive "p")
-  ;; default increment: 5 decipoints
-  (if (= INC-HEIGHT 1)
-      (setq INC-HEIGHT 5))
- (let ((font-height (+ (get-font-size)
-			INC-HEIGHT)))
-    (set-font-size font-height)
-    (message (number-to-string font-height))))
-
-(defun zoom-out (DEC-HEIGHT)
-  "Increase font size by DEC-HEIGHT decipoints (default 5 = 0.5pts)"
-  (interactive "p")
-  ;; default increment: 5 decipoints
-  (if (= DEC-HEIGHT 1)
-      (setq DEC-HEIGHT 5))
-  (let ((font-height (- (get-font-size)
-			DEC-HEIGHT)))
-    (set-font-size font-height)
-    (message (number-to-string font-height))))
-
 ;; ------------------------------------------------------------------------
-;; SET PATH CORRECTLY.
 
-(defun sync-path ()
-  (interactive)
-  (let ((sh-path (split-string-and-unquote
-		  (shell-command-to-string
-		   ". ~/.bashrc &> /dev/null; echo -n $PATH 2> /dev/null")
-		  ":")))
-    (setq exec-path (remove-dups (append exec-path sh-path)))))
-
-;; ------------------------------------------------------------------------
 ;; UTILITY FUNCTIONS.
 
 ;; https://github.com/davvil/.emacs.d/blob/master/init.el
