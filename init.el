@@ -133,6 +133,7 @@
 
 (setq aux-elisp-files
       '("~/.emacs.d/lisp/troyp/utils.el"
+		"~/.emacs.d/lisp/troyp/init-plmodes.el"
 		"~/.emacs.d/lisp/smooth-scrolling.el"
 		"~/.emacs.d/lisp/move-text.el"
 		"~/.emacs.d/lisp/search-bindings.el"
