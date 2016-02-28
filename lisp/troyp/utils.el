@@ -150,24 +150,21 @@
     (move-to-column orig-col)))
 
 ;; open-line functions:
-;; FIXME: functions work, but when reversed, leave cursor where new line was
 
 (defun open-line-above (n)
   "Open a new line above the current line, without moving cursor."
   (interactive "p")
   (save-excursion
-    (push (point) buffer-undo-list)
-    (previous-line 1)
-    (move-end-of-line nil)
-    (newline n)))
+    (interactive "p")
+    (move-beginning-of-line nil)
+    (newline)))
 
 (defun open-line-below (n)
   "Open a new line below the current line, without moving cursor."
   (interactive "p")
   (save-excursion
-    (push (point) buffer-undo-list)
     (move-end-of-line nil)
-    (open-line n)))
+    (newline)))
 
 
 ;; ---------------------------------------------------------------------------
