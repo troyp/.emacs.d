@@ -511,6 +511,7 @@
 ;;   "Generic mode for Vim configuration files.")
 
 (add-to-list 'auto-mode-alist '("\\.vim\\(rc\\)?-?\\w*$" . vimrc-mode))
+(add-to-list 'auto-mode-alist '("\\.penta$" . vimrc-mode))
 (add-to-list 'auto-mode-alist '("\\.pentadactylrc-?\\w*$" . vimrc-mode))
 
 ;; -------------------------------------------------------------------------------
