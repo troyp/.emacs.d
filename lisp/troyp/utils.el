@@ -315,6 +315,14 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;                                    | COMMENTS |
 ;;                                    |__________|
 
+(defun comment-start-adjusted ()
+  "Returns the initial comment string, taking into account the fact that if there is no comment-end string and if comment-start is a single char, comment functions use two comment-start characters."
+  (let* ((comment-start-len      (length comment-start))
+         (doubled-start-char-p   (and (string-empty-p comment-end)
+                                      (= comment-start-len 1))))
+    (cond (doubled-start-char-p    (concat comment-start comment-start))
+           (t                       comment-start))))
+  
 (defun comment-eol (s)
   "Add comment at end of line"
   (interactive "sComment: ")
@@ -327,6 +335,9 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 
 (defun comment-eol-aligned (s)
   "Add comment at end of line, align with other comments in the same 'paragraph'"
+  ;; uses autoindentation to restore lines which are entirely comment
+  ;; However, cannot distinguish between the start of a comment and another use
+  ;; of the same characters (eg. in a string)
   (interactive "sComment: ")
   (comment-eol s)
   (save-excursion
@@ -334,8 +345,11 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
     (align-regexp (region-beginning)
                   (region-end)
                   (concat "\\(\\s-*\\)"
-                          (regexp-quote comment-start))
-                  1 align-default-spacing nil)))
+                          (regexp-quote (comment-start-adjusted)))
+                  1 align-default-spacing nil)
+    (mark-paragraph)
+    (indent-region (region-beginning)
+                   (region-end))))
 
 ;; (defun comment-line (arg)
 ;;   "Comment out or uncomment a single line, n lines below the current line."
