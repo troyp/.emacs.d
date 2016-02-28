@@ -355,11 +355,7 @@
 ;; ess-auto-complete
 (defalias 'ess-auto-complete-start 'ess-ac-start)
 (setq ess-use-auto-complete 'script-only)
-(define-key ac-completing-map "\M-?" 'ac-complete)
-(define-key ac-completing-map "\M-n" nil) ;; was ac-next
-(define-key ac-completing-map "\M-p" nil) ;; was ac-previous
-(define-key ac-completing-map "\C-s" 'ac-next)
-(define-key ac-completing-map "\C-r" 'ac-previous)
+
 ;; speedbar
 (add-hook 'speedbar-mode-hook '(lambda () (speedbar-add-supported-extension ".R")))
 

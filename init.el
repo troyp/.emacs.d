@@ -131,6 +131,7 @@
 
 ;; non-package elisp:
 
+(require 'yasnippet) ;; load before autocomplete
 (setq aux-elisp-files
       '("~/.emacs.d/lisp/troyp/utils.el"
 		"~/.emacs.d/lisp/troyp/init-plmodes.el"
@@ -478,6 +479,15 @@
 (ac-config-default)
 (add-hook 'prog-mode-hook (lambda () (auto-complete-mode t)))
 (ac-set-trigger-key "<tab>")
+
+(defun ac-setup ()
+  (interactive)
+  (define-key ac-completing-map "\M-?" 'ac-complete)
+  (define-key ac-completing-map "\M-n" nil) ;; was ac-next
+  (define-key ac-completing-map "\M-p" nil) ;; was ac-previous
+  (define-key ac-completing-map "\C-s" 'ac-next)
+  (define-key ac-completing-map "\C-r" 'ac-previous))
+(ac-setup)
 
 ;; --------
 ;; semantic
