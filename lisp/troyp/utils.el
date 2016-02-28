@@ -342,14 +342,18 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   (comment-eol s)
   (save-excursion
     (mark-paragraph)
-    (align-regexp (region-beginning)
-                  (region-end)
-                  (concat "\\(\\s-*\\)"
-                          (regexp-quote (comment-start-adjusted)))
-                  1 align-default-spacing nil)
+    (let ((padding
+           (cond
+            ((null current-prefix-arg)    4)
+            (t                            prefix-numeric-value current-prefix-arg))))
+      (align-regexp (region-beginning)
+                    (region-end)
+                    (concat "\\(\\s-*\\)"
+                            (regexp-quote (comment-start-adjusted)))
+                    1 padding nil))
     (mark-paragraph)
     (indent-region (region-beginning)
-                   (region-end))))
+                     (region-end))))
 
 ;; (defun comment-line (arg)
 ;;   "Comment out or uncomment a single line, n lines below the current line."
