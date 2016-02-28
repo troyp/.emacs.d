@@ -315,11 +315,31 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;                                    | COMMENTS |
 ;;                                    |__________|
 
+(defun comment-eol (s)
+  "Add comment at end of line"
+  (interactive "sComment: ")
+  (save-excursion
+    (end-of-line)
+    (insert-char ?  4)
+    (let ((start (point)))
+      (insert s)
+      (comment-region start (point)))))
 
-; functionality replaced by evil-nerd-commenter
+(defun comment-eol-aligned (s)
+  "Add comment at end of line, align with other comments in the same 'paragraph'"
+  (interactive "sComment: ")
+  (comment-eol s)
+  (save-excursion
+    (mark-paragraph)
+    (align-regexp (region-beginning)
+                  (region-end)
+                  (concat "\\(\\s-*\\)"
+                          (regexp-quote comment-start))
+                  1 align-default-spacing nil)))
 
 ;; (defun comment-line (arg)
 ;;   "Comment out or uncomment a single line, n lines below the current line."
+;;   ;; functionality replaced by evil-nerd-commenter
 ;;   (interactive "*P")
 ;;   (save-excursion
 ;;     (let ((n (cond
@@ -333,10 +353,8 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;       (comment-or-uncomment-region (mark) (point)))))
 
 ;; (defun comment-line-or-region (arg)
-;;   "If the region is active and `transient-mark-mode' is on, call
-;; `comment-region' (unless it only consists of comments, in which
-;; case it calls `uncomment-region').
-;; Else, call `comment-line'."
+;;   "If the region is active and `transient-mark-mode' is on, call `comment-region' (unless it only consists of comments, in which case it calls `uncomment-region'). Else, call `comment-line'."
+;;   ;; functionality replaced by evil-nerd-commenter
 ;;   (interactive "*P")
 ;;   (comment-normalize-vars)
 ;;   (if (and mark-active transient-mark-mode)
@@ -543,3 +561,4 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 		   ". ~/.bashrc &> /dev/null; echo -n $PATH 2> /dev/null")
 		  ":")))
     (setq exec-path (remove-dups (append exec-path sh-path)))))
+
