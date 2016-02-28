@@ -750,7 +750,14 @@
 (require 'evil)
 (evil-mode 1)
 
+;; -----------------------
 ;; evil-symbol-word-search
+;; -----------------------
+;; Use symbols rather than words for * and # search
+;; eg. in lisp modes, this will not stop at dashes, etc.
+;; note: for symbol-based text-objects, use "io" ('evil-inner-symbol)
+;;       rather than "iw" / "iW" ('evil-inner-word / 'evil-inner-WORD)
+
 (setq-default evil-symbol-word-search t)
 (defun toggle-evil-symbol-word-search ()
   (interactive)
@@ -921,6 +928,8 @@
   "\\"     'quick-pcre-align
   "|"      'quick-pcre-align-repeat
   ";"      'asciiheadings-prefix-key-map     ;; (PREFIX)
+  "/<SPC>" 'comment-eol
+  "//"     'comment-eol-aligned
   )
 
 ;; -------
