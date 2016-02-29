@@ -447,6 +447,15 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
   (let ((regexp (concat "(\s*)" s)))
     (align-regexp BEG END (pcre-to-elisp regexp) 1 spacing t)))
 
+(defun align-after-colon (BEG END spacing)
+  "Align the first word after a colon in each line in the region. 
+The minimum spacing is given by the prefix argument, if given, or
+otherwise is equal to 'align-default-spacing."
+  (interactive "r\nP")
+  (let ((padding (cond ((null spacing) align-default-spacing)
+                       (t              (prefix-numeric-value spacing))))
+        (regexp  "\\(?:[:]\\)\\(\\s-*\\).*"))
+    (align-regexp (region-beginning) (region-end) regexp 1 padding nil)))
 
 ;; =============================================================================
 ;;                                       _______ 
