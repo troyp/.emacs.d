@@ -355,6 +355,39 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
     (indent-region (region-beginning)
                      (region-end))))
 
+(defun comment-align-end-delimiter (s)
+  "Add comment at point, and align comment end-delimiters for paragraph"
+  (interactive "sComment: ")
+  (save-excursion
+    (let ((start (point)))
+      (insert s)
+      (comment-region start (point)))
+    (mark-paragraph)
+    (let ((padding
+           (cond
+            ((null current-prefix-arg)    4)
+            (t                            prefix-numeric-value current-prefix-arg))))
+      (align-regexp (region-beginning)
+                    (region-end)
+                    (concat "\\(\\s-*\\)"
+                            (regexp-quote comment-end))
+                    1 padding nil))))
+
+(defun align-comment-end-delimiters ()
+  "Align comment end-delimiters for paragraph"
+  (interactive)
+  (when (not (region-active-p)) (mark-paragraph))
+  (let ((padding
+         (cond
+          ((null current-prefix-arg)    4)
+          (t                            prefix-numeric-value current-prefix-arg))))
+    (align-regexp (region-beginning)
+                  (region-end)
+                  (concat "\\(\\s-*\\)"
+                          (regexp-quote comment-end))
+                  1 padding nil)))
+  
+
 ;; (defun comment-line (arg)
 ;;   "Comment out or uncomment a single line, n lines below the current line."
 ;;   ;; functionality replaced by evil-nerd-commenter
