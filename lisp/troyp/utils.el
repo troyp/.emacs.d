@@ -356,36 +356,30 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
                      (region-end))))
 
 (defun comment-align-end-delimiter (s)
-  "Add comment at point, and align comment end-delimiters for paragraph"
+  "Add comment on new line, and align comment end-delimiters paragraph.
+With prefix argument, comment end-delimiter is aligned with that on the previous line instead."
   (interactive "sComment: ")
-  (save-excursion
-    (let ((start (point)))
-      (insert s)
-      (comment-region start (point)))
-    (mark-paragraph)
-    (let ((padding
-           (cond
-            ((null current-prefix-arg)    4)
-            (t                            prefix-numeric-value current-prefix-arg))))
-      (align-regexp (region-beginning)
-                    (region-end)
-                    (concat "\\(\\s-*\\)"
-                            (regexp-quote comment-end))
-                    1 padding nil))))
+  (let ((start (cond (current-prefix-arg (line-beginning-position))
+                     (t                  (save-excursion (mark-paragraph)
+                                                         (region-beginning))))))
+    (end-of-line)
+    (newline)
+    (insert s)
+    (comment-region (line-beginning-position) (line-end-position))
+    (align-regexp start
+                  (line-end-position)
+                  (concat "\\(\\s-*\\)"
+                          (regexp-quote comment-end)))))
 
 (defun align-comment-end-delimiters ()
-  "Align comment end-delimiters for paragraph"
+  "Align comment end-delimiters for region (if active) or paragraph"
   (interactive)
-  (when (not (region-active-p)) (mark-paragraph))
-  (let ((padding
-         (cond
-          ((null current-prefix-arg)    4)
-          (t                            prefix-numeric-value current-prefix-arg))))
+  (save-excursion
+    (when (not (region-active-p)) (mark-paragraph))
     (align-regexp (region-beginning)
                   (region-end)
                   (concat "\\(\\s-*\\)"
-                          (regexp-quote comment-end))
-                  1 padding nil)))
+                          (regexp-quote comment-end)))))
   
 
 ;; (defun comment-line (arg)
