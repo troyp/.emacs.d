@@ -930,6 +930,8 @@
   ";"      'asciiheadings-prefix-key-map     ;; (PREFIX)
   "/<SPC>" 'comment-eol
   "//"     'comment-eol-aligned
+  "/."     'comment-align-end-delimiter
+  "/,"     'align-comment-end-delimiters
   )
 
 ;; -------
