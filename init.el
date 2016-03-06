@@ -885,53 +885,54 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
-  "e"      'helm-find-file
-  "s"      'load-init-file
-  "<SPC>"  [?\C-x ?b return]  ;; switch to last used buffer
-  "b"      'switch-to-buffer
-  "ci"     'evilnc-comment-or-uncomment-lines
-  "cl"     'evilnc-quick-comment-or-uncomment-to-the-line
-  "cc"     'evilnc-copy-and-comment-lines
-  "cp"     'evilnc-comment-or-uncomment-paragraphs
-  "cr"     'comment-or-uncomment-region
-  "cv"     'evilnc-toggle-invert-comment-line-by-line
-  ","      'evilnc-comment-operator
-  "d"      'evilmi-jump-items
-  "k"      'kill-buffer
-  "i"      'open-init-file
-  "v"      'eval-region
-  "V"      'eval-buffer
-  "a"      'ace-jump-word-mode
-  "f"      'ace-jump-char-mode
-  "g"      'ace-jump-line-mode
-  "h"      'extra-help-map                 ;; (PREFIX)
-  "l"      'helm-mini
-  "m"      'mode-ring-prefix-key-map       ;; (PREFIX)
-  "n"      'new-file
-  "o"      'find-file
-  "1"      'delete-other-windows
-  "2"      'split-window-below
-  "3"      'split-window-right
-  "4"      'ctl-x-4-prefix                  ;; (PREFIX) other window commands
-  "0"      'delete-window
-  "["      'kmacro-start-macro-or-insert-counter
-  "]"      'kmacro-end-or-call-macro
-  "<f2>"   '2C-command                      ;; (PREFIX)
-  "<f4>"   'delete-other-window             ;; (PREFIX)
-  ">"      'evil-numbers/inc-at-pt
-  "<"      'evil-numbers/dec-at-pt
-  "."      'find-tag
-  "'"      '(lambda (&optional arg) "Quote surrounding WORD."
-              (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
-  "\""     '(lambda (&optional arg) "Quote surrounding word."
-              (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
-  "\\"     'quick-pcre-align
-  "|"      'quick-pcre-align-repeat
-  ";"      'asciiheadings-prefix-key-map     ;; (PREFIX)
-  "/<SPC>" 'comment-eol
-  "//"     'comment-eol-aligned
-  "/."     'comment-align-end-delimiter
-  "/,"     'align-comment-end-delimiters
+  "e"         'helm-find-file
+  "s"         'load-init-file
+  "<SPC>"     [?\C-x ?b return]  ;; switch to last used buffer
+  "<delete>"  'kill-buffer-and-window
+  "b"         'switch-to-buffer
+  "ci"        'evilnc-comment-or-uncomment-lines
+  "cl"        'evilnc-quick-comment-or-uncomment-to-the-line
+  "cc"        'evilnc-copy-and-comment-lines
+  "cp"        'evilnc-comment-or-uncomment-paragraphs
+  "cr"        'comment-or-uncomment-region
+  "cv"        'evilnc-toggle-invert-comment-line-by-line
+  ","         'evilnc-comment-operator
+  "d"         'evilmi-jump-items
+  "k"         'kill-buffer
+  "i"         'open-init-file
+  "v"         'eval-region
+  "V"         'eval-buffer
+  "a"         'ace-jump-word-mode
+  "f"         'ace-jump-char-mode
+  "g"         'ace-jump-line-mode
+  "h"         'extra-help-map                 ;; (PREFIX)
+  "l"         'helm-mini
+  "m"         'mode-ring-prefix-key-map       ;; (PREFIX)
+  "n"         'new-file
+  "o"         'find-file
+  "1"         'delete-other-windows
+  "2"         'split-window-below
+  "3"         'split-window-right
+  "4"         'ctl-x-4-prefix                  ;; (PREFIX) other window commands
+  "0"         'delete-window
+  "["         'kmacro-start-macro-or-insert-counter
+  "]"         'kmacro-end-or-call-macro
+  "<f2>"      '2C-command                      ;; (PREFIX)
+  "<f4>"      'delete-other-window             ;; (PREFIX)
+  ">"         'evil-numbers/inc-at-pt
+  "<"         'evil-numbers/dec-at-pt
+  "."         'find-tag
+  "'"         '(lambda (&optional arg) "Quote surrounding WORD."
+                 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
+  "\""        '(lambda (&optional arg) "Quote surrounding word."
+                 (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
+  "\\"        'quick-pcre-align
+  "|"         'quick-pcre-align-repeat
+  ";"         'asciiheadings-prefix-key-map     ;; (PREFIX)
+  "/<SPC>"    'comment-eol
+  "//"        'comment-eol-aligned
+  "/."        'comment-align-end-delimiter
+  "/,"        'align-comment-end-delimiters
   )
 
 ;; -------
