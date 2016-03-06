@@ -247,12 +247,6 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 ;;                            |__________________________|
 
 
-(defun kill-and-close-window ()
-  (interactive)
-  (kill-buffer)
-  (delete-window))
-(global-set-key "\C-xc" 'kill-and-close-window)
-
 (defun kill-current-buffer ()
   (interactive)
   (kill-buffer nil))
