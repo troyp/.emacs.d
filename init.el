@@ -711,6 +711,18 @@
 (require 'help-mode+)
 ;; (global-set-key [f1] 'help-on-click/key)
 
+;; ----------
+;; guide-key.
+;; ----------
+(require 'guide-key)
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "SPC"))
+(guide-key-mode 1) 
+(setq guide-key/idle-delay 0.3)
+
+;; guide-key-tip
+(require 'guide-key-tip)
+(setq guide-key-tip/enabled t)
+
 ;; ------------------
 ;; discover-my-major.
 ;; ------------------
@@ -922,19 +934,17 @@
   ">"         'evil-numbers/inc-at-pt
   "<"         'evil-numbers/dec-at-pt
   "."         'find-tag
-  "'"         '(lambda (&optional arg) "Quote surrounding WORD."
-                 (interactive "p") (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
-  "\""        '(lambda (&optional arg) "Quote surrounding word."
-                 (interactive "p") (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
+  "'"         'surround-quote-WORD
+  "\""        'surround-quote-word
   "\\"        'quick-pcre-align
   "|"         'quick-pcre-align-repeat
   ";"         'asciiheadings-prefix-key-map     ;; (PREFIX)
-  "/ SPC"    'comment-eol
+  "/ SPC"     'comment-eol
   "//"        'comment-eol-aligned
   "/."        'comment-align-end-delimiter
   "/,"        'align-comment-end-delimiters
-  "C-s"     'search-forward-regexp
-  "C-r"     'search-backard-regexp
+  "C-s"       'search-forward-regexp
+  "C-r"       'search-backard-regexp
   )
 
 ;; -------
@@ -1009,6 +1019,16 @@
 ;; evil-surround
 (require 'surround)
 (global-surround-mode 1)
+
+(defun surround-quote-WORD (&optional arg)
+  "Quote surrounding WORD."
+  (interactive "p")
+  (kmacro-exec-ring-item (quote ("viWs\"" 0 "%d")) arg))
+
+(defun surround-quote-word (&optional arg)
+  "Quote surrounding word."
+  (interactive "p")
+  (kmacro-exec-ring-item (quote ("viws\"" 0 "%d")) arg))
 
 ;; ;; evil-tabs
 ;; (require 'evil-tabs)
