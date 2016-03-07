@@ -887,7 +887,7 @@
 (evil-leader/set-key
   "e"         'helm-find-file
   "s"         'load-init-file
-  "<SPC>"     [?\C-x ?b return]  ;; switch to last used buffer
+  "SPC"       [?\C-x ?b return]  ;; switch to last used buffer
   "<delete>"  'kill-buffer-and-window
   "b"         'switch-to-buffer
   "ci"        'evilnc-comment-or-uncomment-lines
@@ -929,10 +929,12 @@
   "\\"        'quick-pcre-align
   "|"         'quick-pcre-align-repeat
   ";"         'asciiheadings-prefix-key-map     ;; (PREFIX)
-  "/<SPC>"    'comment-eol
+  "/ SPC"    'comment-eol
   "//"        'comment-eol-aligned
   "/."        'comment-align-end-delimiter
   "/,"        'align-comment-end-delimiters
+  "C-s"     'search-forward-regexp
+  "C-r"     'search-backard-regexp
   )
 
 ;; -------
