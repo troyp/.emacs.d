@@ -715,9 +715,16 @@
 ;; guide-key.
 ;; ----------
 (require 'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "SPC"))
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "SPC" "C-h"))
 (guide-key-mode 1) 
 (setq guide-key/idle-delay 0.3)
+(setq guide-key/recursive-key-sequence-flag t)
+(setq guide-key/highlight-command-regexp
+      '(("ace-.*-mode"          . "red")
+        ("buffer"               . font-lock-type-face)
+        ("file"                 . "blue")))
+(setq guide-key/highlight-prefix-regexp "prefix\\|2C-command") 
+(set-face-attribute 'guide-key/prefix-command-face nil :foreground "hot pink")
 
 ;; guide-key-tip
 (require 'guide-key-tip)
@@ -934,6 +941,7 @@
   ">"         'evil-numbers/inc-at-pt
   "<"         'evil-numbers/dec-at-pt
   "."         'find-tag
+  "="         'describe-char
   "'"         'surround-quote-WORD
   "\""        'surround-quote-word
   "\\"        'quick-pcre-align
@@ -1182,10 +1190,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-prefix-command 'extra-help-map)
 (define-key 'extra-help-map "va" 'extra-help-apropos-all-variables)
 (define-key 'extra-help-map "vu" 'extra-help-apropos-user-variables)
+(define-key 'extra-help-map "kt" 'guide-key-tip/toggle-enable)
 
 ;; define key sequence explicitly
-(define-prefix-command 'menu-key-map)
-(global-set-key (kbd "<menu>") 'menu-key-map)
+(define-prefix-command 'menu-key-prefix-map)
+(global-set-key (kbd "<menu>") 'menu-key-prefix-map)
 (global-set-key (kbd "<menu>1") 'linum-mode)
 
 
