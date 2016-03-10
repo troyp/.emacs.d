@@ -919,8 +919,6 @@
   "d"         'evilmi-jump-items
   "k"         'kill-buffer
   "i"         'open-init-file
-  "v"         'eval-region
-  "V"         'eval-buffer
   "a"         'ace-jump-word-mode
   "f"         'ace-jump-char-mode
   "g"         'ace-jump-line-mode
@@ -929,6 +927,9 @@
   "m"         'mode-ring-prefix-key-map       ;; (PREFIX)
   "n"         'new-file
   "o"         'find-file
+  "u"         'undo-tree-switch-branch
+  "v"         'eval-region
+  "V"         'eval-buffer
   "1"         'delete-other-windows
   "2"         'split-window-below
   "3"         'split-window-right
