@@ -570,14 +570,21 @@
 (require 'dired+)
 (require 'dired-details+)
 (require 'dired-efap)
-(define-key dired-mode-map [f2] 'dired-efap)
-(define-key dired-mode-map [down-mouse-1] 'dired-efap-click)
 (setq-default dired-listing-switches "-lGh --group-directories-first")
 (defun dired-separate-extensions ()
   (interactive)
   (setq-default dired-listing-switches (concat "-X " dired-listing-switches)))
 (setq dired-alt-listing-switches "-alhv")
 
+(defun dired-bindings ()
+  (define-key dired-mode-map [f2] 'dired-efap)
+  (define-key dired-mode-map [down-mouse-1] 'dired-efap-click)
+  (define-key dired-mode-map j 'diredp-next-line)
+  (define-key dired-mode-map k 'diredp-previous-line)
+  (define-key dired-mode-map / 'evil-search-forward)
+  (define-key dired-mode-map / 'evil-search-forward)
+  (define-key dired-mode-map (kbd "C-c l") 'dired-open-xdg)
+  )
 
 (require 'dired-imenu)
 (add-hook
@@ -590,8 +597,9 @@
    (defalias 'df 'dired-find-file)
    (require 'dired-imenu)
    (require 'dired-open)
-   (define-key dired-mode-map (kbd "C-c l") 'dired-open-xdg)
-   (defalias 'dx 'dired-open-xdg)))
+   (defalias 'dx 'dired-open-xdg)
+   (dired-bindings)
+   ))
 
 ;; *****************************
 ;; *                           *
@@ -804,7 +812,7 @@
 		comint-mode  ;; not working for comint-mode?
 		term-mode
 		shell-mode
-		;; dired-mode
+		dired-mode
 		)
 	  do (add-to-list 'evil-emacs-state-modes mode))
 
