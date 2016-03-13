@@ -866,6 +866,8 @@
 (define-key evil-insert-state-map (kbd "C-.") 'yas-expand)
 (define-key evil-insert-state-map (kbd "C-n") #'next-line)
 (define-key evil-insert-state-map (kbd "C-p") #'previous-line)
+(define-key evil-insert-state-map (kbd "M-/") #'dabbrev-expand)
+(define-key evil-insert-state-map (kbd "C-M-SPC") #'hippie-expand)
 
 ;; evil-mode mozc-mode keybindings:
 ;; See mozc section above. Workaround. Allows C-\ to toggle japanese input.
@@ -917,6 +919,7 @@
   "SPC"       [?\C-x ?b return]  ;; switch to last used buffer
   "<delete>"  'kill-buffer-and-window
   "b"         'switch-to-buffer
+  "ca"        'calc
   "ci"        'evilnc-comment-or-uncomment-lines
   "cl"        'evilnc-quick-comment-or-uncomment-to-the-line
   "cc"        'evilnc-copy-and-comment-lines
@@ -936,6 +939,8 @@
   "n"         'new-file
   "o"         'find-file
   "u"         'undo-tree-switch-branch
+  "ww"        [(menu-bar) options line-wrapping window-wrap]
+  "wo"        [(menu-bar) options line-wrapping truncate]
   "v"         'eval-region
   "V"         'eval-buffer
   "1"         'delete-other-windows
