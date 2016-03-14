@@ -820,7 +820,8 @@
 ;; KEYBINDINGS 
 ;; ----------- 
 (load "troyp/evil-utils.el")
-;; (evil-define-key 'STATE KEYMAP    ;; define key for STATE in KEYMAP
+;; note: to create evil state bindings in a given keymap, use the #'evil-define-key macro
+;; (evil-define-key 'STATE KEYMAP KEY FN [KEY FN ...])  ;; define key for STATE in KEYMAP
 
 ;; remove C-w C-h binding (steals C-h from help system)
 (define-key evil-window-map "\C-h" nil)
@@ -1101,6 +1102,13 @@
  predictive-use-auto-learn-cache nil
  predictive-which-dict t)
 
+;; ********
+;; *      *
+;; * Calc *
+;; *      *
+;; ********
+
+(define-key calc-mode-map (kbd "<S-SPC>") 'calc-times)
 
 ;; ****************
 ;; *              *
