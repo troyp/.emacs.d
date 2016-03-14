@@ -1102,13 +1102,6 @@
  predictive-use-auto-learn-cache nil
  predictive-which-dict t)
 
-;; ********
-;; *      *
-;; * Calc *
-;; *      *
-;; ********
-
-(define-key calc-mode-map (kbd "<S-SPC>") 'calc-times)
 
 ;; ****************
 ;; *              *
@@ -1232,7 +1225,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [f8] 'get-face)
 (global-set-key [\M-f8] 'what-cursor-position)
 (global-set-key [\C-f8] 'describe-char)
-(global-set-key [\S-f8] 'palette-foreground-at-point)
+(global-set-key [\S-f8] 'palette-foreground-at-point)  ;; palette.el (dadams)
 
 
 (global-set-key "\C-a" 'move-beginning-of-line-or-text)
