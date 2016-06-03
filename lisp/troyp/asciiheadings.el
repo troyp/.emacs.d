@@ -4,7 +4,7 @@
 ;;       | HEADING FUNCTIONS |
 ;;       |___________________|
 
-(load "troyp/utils.el")
+;; (load "troyp/utils.el")
 
 ;; TODO: rename functions with module prefix
 

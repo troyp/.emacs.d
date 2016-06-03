@@ -717,7 +717,7 @@
 (require 'help+)
 (require 'help-fns+)
 (require 'help-mode+)
-;; (global-set-key [f1] 'help-on-click/key)
+;; (global-set-key [f1] 'help-on-click/key)    ;; dadams/help+.el
 
 ;; ----------
 ;; guide-key.
@@ -816,9 +816,9 @@
 		)
 	  do (add-to-list 'evil-emacs-state-modes mode))
 
-;; ----------- 
-;; KEYBINDINGS 
-;; ----------- 
+;; -----------
+;; KEYBINDINGS
+;; -----------
 (load "troyp/evil-utils.el")
 ;; note: to create evil state bindings in a given keymap, use the #'evil-define-key macro
 ;; (evil-define-key 'STATE KEYMAP KEY FN [KEY FN ...])  ;; define key for STATE in KEYMAP
@@ -847,7 +847,7 @@
 (define-key evil-visual-state-map (kbd "S-SPC") #'insert-space-visual)
 ;; (define-key evil-visual-state-map [32] #'evil-forward-char-or-extend)
 (define-key evil-visual-state-map (kbd "C-SPC") #'evil-forward-char-or-extend)
-(define-key evil-visual-state-map (kbd "C-\\") #'shell-command-replace-region)
+(define-key evil-visual-state-map (kbd "C-\\") #'shell-command-replace-region)    ;; utils.el
 (define-key evil-visual-state-map (kbd "M-u") #'evil-upcase)
 (define-key evil-visual-state-map (kbd "M-l") #'evil-downcase)
 
