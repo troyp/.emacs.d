@@ -14,6 +14,7 @@ session.*
 *.zip
 *.pdf
 ac-comphist.dat
+melpa
 temp
 tmp
 temp.*
