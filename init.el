@@ -67,16 +67,18 @@
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/dash.el")
 
+(add-to-list 'load-path "~/.emacs.d/melpa")
+
 (require 'dash)
 (require 'dash-functional)
 (eval-after-load "dash" '(dash-enable-font-lock))
 
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 ;; (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
+(require 'package-build)
+(package-initialize) (setf package-enable-at-startup nil)
 
 ;; ;; Cask & Pallet
 ;; (require 'cask)
