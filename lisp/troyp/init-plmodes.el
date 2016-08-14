@@ -36,12 +36,12 @@
 
 ;; EMACS-CLANG-COMPLETE-ASYNC
 
-;; (add-to-list 'load-path "~/.emacs.d/emacs-clang-complete-async")
+;; (add-to-list 'load-path (expand-file-name "emacs-clang-complete-async" user-emacs-directory))
 ;; (require 'auto-complete-config)
 ;; (require 'auto-complete-clang-async)
 
 ;; (defun ac-cc-mode-setup ()
-;;   (setq ac-clang-complete-executable "~/.emacs.d/emacs-clang-complete-async/clang-complete")
+;;   (setq ac-clang-complete-executable (expand-file-name "emacs-clang-complete-async/clang-complete" user-emacs-directory))
 ;;   (setq ac-sources '(ac-source-clang-async))
 ;;   (ac-clang-launch-completion-process)
 ;; )
@@ -96,7 +96,7 @@
 ;; (require 'erlang-start)
 
 ;; (setq inferior-erlang-machine-options '("-sname" "emacs"))
-;; (add-to-list 'load-path "~/.emacs.d/distel/elisp")
+;; (add-to-list 'load-path (expand-file-name "distel/elisp" user-emacs-directory))
 ;; (require 'distel)
 ;; (distel-setup)
 
@@ -132,7 +132,7 @@
 
 ;; ;; Scion.
 ;; ;; ======
-;; (add-to-list 'load-path "~/.emacs.d/plugins/scion-master/emacs")
+;; (add-to-list 'load-path (expand-file-name "plugins/scion-master/emacs" user-emacs-directory))
 ;; (require 'scion)
 ;; (setq scion-program "~/.cabal/bin/scion-server")
 ;; (defun my-haskell-hook ()
@@ -377,12 +377,12 @@
 ;; '-------'
 
 ;; Scala-mode.
-;; (add-to-list 'load-path "~/.emacs.d/scala-mode2-master")
+;; (add-to-list 'load-path (expand-file-name "scala-mode2-master" user-emacs-directory))
 (require 'scala-mode2)
 (add-to-list 'exec-path "/opt/scala/bin/")
 
 ;; Ensime.
-(add-to-list 'load-path "~/.emacs.d/ensime-master/src/main/elisp/")
+(add-to-list 'load-path (expand-file-name "ensime-master/src/main/elisp/" user-emacs-directory))
 (require 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 

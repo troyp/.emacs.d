@@ -61,7 +61,7 @@ Defaults to a regexp ignoring all inputs of 0, 1, or 2 letters."
   :type 'regexp
   :group 'inf-perl)
 
-(defcustom inf-perl-shell-program (expand-file-name "~/.emacs.d/psh.pl")
+(defcustom inf-perl-shell-program (expand-file-name "psh.pl" user-emacs-directory)
   "*The perl shell program location"
   :type 'file
   :group 'inf-perl)

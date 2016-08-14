@@ -253,11 +253,11 @@ To ignore intangibility, bind `inhibit-point-motion-hooks' to t."
 
 (defun load-init-file ()
   (interactive)
-  (load-file "~/.emacs.d/init.el"))
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
 
 (defun open-init-file ()
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file (expand-file-name "init.el" user-emacs-directory)))
 
 (defun rename-file-and-buffer (name)
   (interactive "snew name: ")

@@ -1,5 +1,5 @@
-(add-to-list 'load-path "~/.emacs.d/popwin-el") 
-(add-to-list 'load-path "~/.emacs.d/popwin-el/misc") 
+(add-to-list 'load-path (expand-file-name "popwin-el" user-emacs-directory)) 
+(add-to-list 'load-path (expand-file-name "popwin-el/misc" user-emacs-directory)) 
 (require 'popwin)
 (popwin-mode 1)
 (global-set-key (kbd "C-S-z") popwin:keymap)
