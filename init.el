@@ -10,7 +10,7 @@
 (setq inhibit-startup-screen t)
 
 (global-font-lock-mode t)
-;(electric-pair-mode 1)
+                                        ;(electric-pair-mode 1)
 
 (setq transient-mark-mode t)
 (setq x-select-enable-clipboard t)
@@ -30,7 +30,7 @@
 (set-scroll-bar-mode `right)
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed nil)
-;(setq shift-select-mode nil)
+                                        ;(setq shift-select-mode nil)
 
 (setq scroll-preserve-screen-position 'always)
 (setq hscroll-margin 5)
@@ -44,16 +44,16 @@
 (setq default-tab-width 4)
 (setq fill-column 78)
 
-(setq custom-file "~/.emacs.d/custom.el")
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
-(add-to-list 'Info-default-directory-list "~/.emacs.d/info")
+(add-to-list 'Info-default-directory-list (expand-file-name "info" user-emacs-directory))
 
 (setq ediff-split-window-function 
       (if (> (frame-width) 140) 'split-window-horizontally 
-	'split-window-vertically))
+        'split-window-vertically))
 
 (if (boundp 'cua-enable-cua-keys)
-	(setf cua-enable-cua-keys nil))
+    (setf cua-enable-cua-keys nil))
 
 ;; **********************
 ;; *                    *
@@ -63,11 +63,11 @@
 
 (eval-when-compile (require 'subr-x))
 
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/plugins")
-(add-to-list 'load-path "~/.emacs.d/dash.el")
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "plugins" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "dash.el" user-emacs-directory))
 
-(add-to-list 'load-path "~/.emacs.d/melpa")
+(add-to-list 'load-path (expand-file-name "melpa" user-emacs-directory))
 
 (require 'dash)
 (require 'dash-functional)
@@ -80,12 +80,37 @@
 (require 'package-build)
 (package-initialize) (setf package-enable-at-startup nil)
 
-;; ;; Cask & Pallet
+;; **********
+;; *        *
+;; * QUELPA *
+;; *        *
+;; **********
+
+(require 'quelpa-use-package)
+
+(use-package evil-visual-replace
+  :quelpa ((evil-visual-replace :fetcher github :repo "troyp/evil-visual-replace")
+           :upgrade t))
+
+;; (use-package fn
+;;   :quelpa (fn :fetcher github :repo "troyp/fn.el"))
+
+;; *****************
+;; *               *
+;; * CASK & PALLET *
+;; *               *
+;; *****************
+
 ;; (require 'cask)
 ;; (cask-initialize)
 
-;; El-Get
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+;; **********
+;; *        *
+;; * EL-GET *
+;; *        *
+;; **********
+
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -108,7 +133,7 @@
 ;; *************
 
 ;; dash.el
-(add-to-list 'load-path "~/.emacs.d/dash.el")
+(add-to-list 'load-path (expand-file-name "dash.el" user-emacs-directory))
 
 
 ;; ***********
@@ -135,18 +160,18 @@
 
 (require 'yasnippet) ;; load before autocomplete
 (setq aux-elisp-files
-      '("~/.emacs.d/lisp/troyp/utils.el"
-		"~/.emacs.d/lisp/troyp/init-plmodes.el"
-		"~/.emacs.d/lisp/smooth-scrolling.el"
-		"~/.emacs.d/lisp/move-text.el"
-		"~/.emacs.d/lisp/search-bindings.el"
-		))
+      (list (expand-file-name "lisp/troyp/utils.el" user-emacs-directory)
+            (expand-file-name "lisp/troyp/init-plmodes.el" user-emacs-directory)
+            (expand-file-name "lisp/smooth-scrolling.el" user-emacs-directory)
+            (expand-file-name "lisp/move-text.el" user-emacs-directory)
+            (expand-file-name "lisp/search-bindings.el" user-emacs-directory)
+            ))
 (loop for f in aux-elisp-files do
       (if (file-exists-p f) (load f)))
 
 ;; packages:
 
-(add-to-list 'load-path "~/.emacs.d/lisp/troyp")
+(add-to-list 'load-path (expand-file-name "lisp/troyp" user-emacs-directory))
 (require 'mode-ring)
 (require 'asciiheadings)
 
@@ -163,25 +188,25 @@
 ;; '-----------------'
 
 (setq dark-themes
-	  '(
-		zenburn
-		hc-zenburn
-		misterioso
-		sanityinc-tomorrow-night
-		sanityinc-tomorrow-eighties
-		))
+      '(
+        zenburn
+        hc-zenburn
+        misterioso
+        sanityinc-tomorrow-night
+        sanityinc-tomorrow-eighties
+        ))
 (setq light-themes
       '(
-		sanityinc-solarized-light
-		dichromacy
-		adwaita
-		sanityinc-tomorrow-day
-		))
+        sanityinc-solarized-light
+        dichromacy
+        adwaita
+        sanityinc-tomorrow-day
+        ))
 (setq mode-line-themes
       '(
-		smart-mode-line-light
-		smart-mode-line-dark
-		))
+        smart-mode-line-light
+        smart-mode-line-dark
+        ))
 
 (setq primary-light-theme 'adwaita)
 (setq primary-dark-theme 'hc-zenburn)
@@ -215,16 +240,16 @@
   (interactive)
   (if (light-theme-p (current-theme))
       (progn
-		(load-theme primary-dark-theme)
-		(cursor-color troy/white-grey))
-	(progn
-	  (load-theme primary-light-theme)
-	  (cursor-color troy/dark-grey))))
+        (load-theme primary-dark-theme)
+        (cursor-color troy/white-grey))
+    (progn
+      (load-theme primary-light-theme)
+      (cursor-color troy/dark-grey))))
 (defalias 'tt 'toggle-theme)
 
 (setq theme-history nil)
 (defadvice load-theme 
-  (after push-history (THEME &optional NO-CONFIRM NO-ENABLE) activate)
+    (after push-history (THEME &optional NO-CONFIRM NO-ENABLE) activate)
   "Push THEME onto `theme-history' (init.el)"
   (setq theme-history (cons THEME theme-history)))
 
@@ -253,8 +278,8 @@
 
 (defun set-mode-to-vpitch (hook)
   (add-hook hook (lambda ()
-		   (variable-pitch-mode t)
-		   (set-vfont))))
+                   (variable-pitch-mode t)
+                   (set-vfont))))
 
 ;; (dolist (hook '(erc-mode-hook
 ;; 		LaTeX-mode-hook
@@ -272,15 +297,15 @@
 (sml/setup)
 (setq sml/replacer-regexp-list
       '(("^~/org/" ":Org:")
-	("^~/\\.emacs\\.d/" ":Em.d:")
-	("^/sudo:.*:" ":SU:")
-	("^~/Documents/" ":Doc:")
-	;("^~/[Gg]it/" ":Git:")
-	;("^~/[Gg]it[Hh]ub/" ":Git:")
-	;("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
-	("^~/Downloads/" ":DL:")
-	("^~/\\.config/" ":Conf:")
-	("^~/code/" ":CODE:")))
+        ("^~/\\.emacs\\.d/" ":Em.d:")
+        ("^/sudo:.*:" ":SU:")
+        ("^~/Documents/" ":Doc:")
+                                        ;("^~/[Gg]it/" ":Git:")
+                                        ;("^~/[Gg]it[Hh]ub/" ":Git:")
+                                        ;("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
+        ("^~/Downloads/" ":DL:")
+        ("^~/\\.config/" ":Conf:")
+        ("^~/code/" ":CODE:")))
 
 ;; ---------
 ;; uniquify.
@@ -304,7 +329,7 @@
 (set-input-method 'TeX)
 (defun load-math-input ()
   (interactive)
-  (load "~/.emacs.d/math-input.el"))
+  (load (expand-file-name "math-input.el" user-emacs-directory)))
 
 ;; (require 'ibus)
 ;; ;; WARNING: ibus-mode steals "r" key from undo-tree
@@ -341,12 +366,12 @@
 ;; http://www.emacswiki.org/emacs/rx
 (defmacro rx-extra (&rest body-forms)
   (let ((add-ins (list
-				  `(file . ,(rx (+ (or alnum digit "." "/" "-" "_"))))
-				  `(ws0 . ,(rx (0+ (any " " "\t"))))
-				  `(ws+ . ,(rx (+ (any " " "\t"))))
-				  `(int . ,(rx (+ digit))))))
-	`(let ((rx-constituents (append ',add-ins rx-constituents nil)))
-	   ,@body-forms)))
+                  `(file . ,(rx (+ (or alnum digit "." "/" "-" "_"))))
+                  `(ws0 . ,(rx (0+ (any " " "\t"))))
+                  `(ws+ . ,(rx (+ (any " " "\t"))))
+                  `(int . ,(rx (+ digit))))))
+    `(let ((rx-constituents (append ',add-ins rx-constituents nil)))
+       ,@body-forms)))
 ;; ; example 
 ;; (let ((string " at Isrc/file-23_2.c line 23 ;: flubber"))
 ;;   (if (string-match (rx-extra (rx ws+ "at" ws+ (group file) ws+ "line" ws+ (group int))) string)
@@ -369,10 +394,10 @@
  'isearch-mode-hook
  (function
   (lambda ()
-	(define-key isearch-mode-map "\C-h" 'isearch-mode-help)
-	(define-key isearch-mode-map "\C-t" 'isearch-toggle-regexp)
-	(define-key isearch-mode-map "\C-c" 'isearch-toggle-case-fold)
-	(define-key isearch-mode-map "\C-j" 'isearch-edit-string))))
+    (define-key isearch-mode-map "\C-h" 'isearch-mode-help)
+    (define-key isearch-mode-map "\C-t" 'isearch-toggle-regexp)
+    (define-key isearch-mode-map "\C-c" 'isearch-toggle-case-fold)
+    (define-key isearch-mode-map "\C-j" 'isearch-edit-string))))
 ;; add indicator for case-fold-search in modeline
 (add-to-list 'minor-mode-alist '(case-fold-search " CFS"))
 
@@ -448,7 +473,7 @@
 ;; (autoload 'smex "smex" "Smex provides an ido interface to M-x commands.")
 (global-set-key (kbd "M-x") 'smex)
 
-;; (load "~/.emacs.d/ido-helm.el")
+;; (load (expand-file-name "ido-helm.el" user-emacs-directory))
 ;; ;; (define-key ido-buffer-completion-map (kbd "<tab>") 'ido-next-match)
 ;; ;; (define-key ido-buffer-completion-map (kbd "<backtab>") 'ido-prev-match)
 
@@ -477,7 +502,7 @@
 ;; load AFTER yasnippet
 (require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(add-to-list 'ac-dictionary-directories (expand-file-name "ac-dict" user-emacs-directory))
 (ac-config-default)
 (add-hook 'prog-mode-hook (lambda () (auto-complete-mode t)))
 (ac-set-trigger-key "<tab>")
@@ -495,9 +520,9 @@
 ;; semantic
 ;; --------
 (add-hook 'c++-mode-hook
-	  (lambda ()
-	    (semantic-mode t)
-	    (global-set-key (kbd "s-/") 'semantic-ia-complete-symbol)))
+          (lambda ()
+            (semantic-mode t)
+            (global-set-key (kbd "s-/") 'semantic-ia-complete-symbol)))
 
 
 ;; ****************************
@@ -568,7 +593,7 @@
 ;; *       *
 ;; *********
 
-(add-to-list 'load-path "~/.emacs.d/dired-hacks")
+(add-to-list 'load-path (expand-file-name "dired-hacks" user-emacs-directory))
 (require 'dired+)
 (require 'dired-details+)
 (require 'dired-efap)
@@ -609,7 +634,7 @@
 ;; *                           *
 ;; *****************************
 
-;; (load "~/.emacs.d/init-popwin.el")
+;; (load (expand-file-name "init-popwin.el" user-emacs-directory))
 
 (windmove-default-keybindings 'meta)  ; meta-arrow to move buffers
 (global-set-key [C-tab] 'next-multiframe-window)
@@ -642,16 +667,16 @@
   "Swap windows using buffer-move.el"
   (interactive)
   (cond ((windmove-find-other-window 'right) (buf-move-right))
-	((windmove-find-other-window 'left)  (buf-move-left))
-	((windmove-find-other-window 'down)  (buf-move-down))
-	((windmove-find-other-window 'up)    (buf-move-up)))
+        ((windmove-find-other-window 'left)  (buf-move-left))
+        ((windmove-find-other-window 'down)  (buf-move-down))
+        ((windmove-find-other-window 'up)    (buf-move-up)))
   (other-window 1))
 (global-set-key (kbd "<S-return>")  'win-swap)
 
 (defun toggle-frame-split ()
-"  If the frame is split vertically, split it horizontally or vice versa.
+  "  If the frame is split vertically, split it horizontally or vice versa.
   Assumes that the frame is only split into two."
-;; http://www.emacswiki.org/emacs/ToggleWindowSplit
+  ;; http://www.emacswiki.org/emacs/ToggleWindowSplit
   (interactive)
   (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
   (let ((split-vertically-p (window-combined-p)))
@@ -693,7 +718,7 @@
 ;; ---------
 ;; facemenu+
 ;; ---------
-(add-to-list 'load-path "~/.emacs.d/drew-adams")
+(add-to-list 'load-path (expand-file-name "drew-adams" user-emacs-directory))
 (require 'highlight)
 (require 'facemenu+)
 
@@ -704,7 +729,7 @@
 ;; iedit-mode.
 ;; -----------
 (setq iedit-toggle-key-default [(meta f3)])
-;; (add-to-list 'load-path "~/.emacs.d/iedit")
+;; (add-to-list 'load-path (expand-file-name "iedit" user-emacs-directory))
 (require 'iedit)
 
 ;; ***************
@@ -712,7 +737,7 @@
 ;; * HELP SYSTEM *
 ;; *             *
 ;; ***************
-(add-to-list 'load-path "~/.emacs.d/drew-adams")
+(add-to-list 'load-path (expand-file-name "drew-adams" user-emacs-directory))
 (require 'help-macro)
 (require 'backquote)
 (require 'naked nil t) ;; (no error if not found): naked-key-description
@@ -770,12 +795,12 @@
 
 (defun evil-plugins-refresh-dirs ()
   (interactive)
-  (add-subdirs-to-load-path "~/.emacs.d/evil-plugins"))
+  (add-subdirs-to-load-path (expand-file-name "evil-plugins" user-emacs-directory)))
 (evil-plugins-refresh-dirs)
 
 (global-set-key [f9] 'evil-mode)
 
-;; (add-to-list 'load-path "~/.emacs.d/evil")
+;; (add-to-list 'load-path (expand-file-name "evil" user-emacs-directory))
 (require 'evil)
 (evil-mode 1)
 
@@ -804,19 +829,19 @@
 (add-to-list 'evil-overriding-maps '(help-mode-map . normal))
 
 (add-hook 'help-mode-hook 
-		  '(lambda () 
-			 (define-key evil-motion-state-map (kbd "TAB") #'forward-button)))
+          '(lambda () 
+             (define-key evil-motion-state-map (kbd "TAB") #'forward-button)))
 ;; FIXME: turn off when out of help buffer.
 
 ;; Modes starting in Emacs state:
 (loop for mode in
       '(
-		comint-mode  ;; not working for comint-mode?
-		term-mode
-		shell-mode
-		dired-mode
-		)
-	  do (add-to-list 'evil-emacs-state-modes mode))
+        comint-mode  ;; not working for comint-mode?
+        term-mode
+        shell-mode
+        dired-mode
+        )
+      do (add-to-list 'evil-emacs-state-modes mode))
 
 ;; -----------
 ;; KEYBINDINGS
@@ -1155,7 +1180,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; *       *
 ;; *********
 
-;; (load "~/.emacs.d/init-mouse.el")
+;; (load (expand-file-name "init-mouse.el" user-emacs-directory))
 
 
 ;; ******************************
@@ -1249,16 +1274,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [end]      'end-of-buffer)       ; [End]
 (global-set-key [\M-f12]   'shell-pop)
 
-;(global-set-key (kbd "M-;") 'comment-dwim) ;; replaced by evil-nc- function
-;(global-set-key "\M-f" 'forward-sexp)
-;(global-set-key "\M-b" 'backward-sexp)
+                                        ;(global-set-key (kbd "M-;") 'comment-dwim) ;; replaced by evil-nc- function
+                                        ;(global-set-key "\M-f" 'forward-sexp)
+                                        ;(global-set-key "\M-b" 'backward-sexp)
 (global-set-key "\M-sq" 'insert-char)
 (global-set-key "\C-z" 'undo)    ; [Undo]
 ;; (global-set-key "\M-1" 'goto-line)  ;; use "M-g g" or "M-g M-g"
 (global-set-key "\M-c" 'capitalize-word)
 (global-set-key (kbd "C-x C-9") 'variable-pitch-mode)
-;(global-set-key "\C-h" 'delete-backward-char)
-;(global-set-key "\C-?" 'help-command)
+                                        ;(global-set-key "\C-h" 'delete-backward-char)
+                                        ;(global-set-key "\C-?" 'help-command)
 (global-set-key "\M-o" 'occur)
 (global-set-key (kbd "C-x SPC") 'just-one-space)
 (global-set-key [M-f1] 'apropos-follow)
@@ -1271,9 +1296,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "M-n") 'evil-scroll-line-down)
 (global-set-key (kbd "M-p") 'evil-scroll-line-up)
 (global-set-key (kbd "C-S-n")
-		(lambda () (interactive) (scroll-other-window-down 1)))
+                (lambda () (interactive) (scroll-other-window-down 1)))
 (global-set-key (kbd "C-S-p")
-		(lambda () (interactive) (scroll-other-window-down -1)))
+                (lambda () (interactive) (scroll-other-window-down -1)))
 
 ;; KEYBOARD MACROS.
 ;; 
@@ -1305,7 +1330,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive "SName of the macro :")  ; ask for the name of the macro
   (kmacro-name-last-macro name)         ; use this name for the macro
   (find-file (concat user-init-file
-		     "-kmacros"))       ; open ~/.emacs or other user init file
+                     "-kmacros"))       ; open ~/.emacs or other user init file
   (goto-char (point-max))               ; go to the end of the .emacs
   (newline)                             ; insert a newline
   (insert-kbd-macro name)               ; copy the macro
@@ -1322,7 +1347,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (if (listp value)
         (mapcar 'switch-to-buffer (nreverse value))
       (switch-to-buffer value))))
- 
+
 
 ;; ***********
 ;; *         *
